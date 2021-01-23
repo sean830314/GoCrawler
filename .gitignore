@@ -16,3 +16,4 @@
 
 # Other
 .vscode
+*.log
