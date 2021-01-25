@@ -1,0 +1,46 @@
+definitions:
+  app.Response:
+    properties:
+      code:
+        type: integer
+      data:
+        type: object
+      msg:
+        type: string
+    type: object
+host: localhost:8080
+info:
+  contact:
+    email: kroos0314@gmail.com
+    name: Kroos.chen
+    url: https://github.com/sean830314/GoCrawler
+  description: This is a Crawler server.
+  license:
+    name: Apache 2.0
+    url: http://www.apache.org/licenses/LICENSE-2.0.html
+  termsOfService: http://swagger.io/terms/
+  title: Golang Crawler API With Gin
+  version: "1.0"
+paths:
+  /ping:
+    get:
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/app.Response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/app.Response'
+      summary: Get Ping
+securityDefinitions:
+  Bearer:
+    in: header
+    name: Authorization
+    type: apiKey
+swagger: "2.0"
+x-extension-openapi:
+  example: value on a json format
