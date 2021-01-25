@@ -39,8 +39,8 @@ func (f *colorFormatter) Format(entry *logrus.Entry) ([]byte, error) {
 	return []byte(fmt.Sprintf("[%s] - \x1b[%dm%s\x1b[0m - %s\n", entry.Time.Format(f.TimestampFormat), levelColor, strings.ToUpper(entry.Level.String()), entry.Message)), nil
 }
 func InitLogger(logPath string) {
-	runID := time.Now().Format("run-2006-01-02-15-04-05")
-	logLocation := filepath.Join(logPath, runID+".log")
+	logName := time.Now().Format("2006-01-02-15-04-05")
+	logLocation := filepath.Join(logPath, logName+".log")
 	color_formatter := &colorFormatter{logrus.TextFormatter{
 		DisableColors:   true,
 		ForceColors:     false,
@@ -48,9 +48,9 @@ func InitLogger(logPath string) {
 	}}
 	rotateFileHook, err := rotatefilehook.NewRotateFileHook(rotatefilehook.RotateFileConfig{
 		Filename:   logLocation,
-		MaxSize:    50, // megabytes
+		MaxSize:    50,
 		MaxBackups: 3,
-		MaxAge:     7, //days
+		MaxAge:     7,
 		Level:      logrus.InfoLevel,
 		Formatter:  color_formatter,
 	})
