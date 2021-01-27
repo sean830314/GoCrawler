@@ -36,6 +36,26 @@ paths:
           schema:
             $ref: '#/definitions/app.Response'
       summary: Get Ping
+  /ptt/beauty:
+    get:
+      parameters:
+      - description: Message
+        in: query
+        name: message
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/app.Response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/app.Response'
+      summary: Download Beauty Image
 securityDefinitions:
   Bearer:
     in: header
