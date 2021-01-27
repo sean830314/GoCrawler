@@ -4,6 +4,7 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/sean830314/GoCrawler/pkg/middleware"
 	"github.com/sean830314/GoCrawler/pkg/routers/api"
+	"github.com/sean830314/GoCrawler/pkg/routers/api/ptt"
 	"github.com/sirupsen/logrus"
 )
 
@@ -14,5 +15,6 @@ func InitRouter() *gin.Engine {
 	r.Use(middleware.LoggerToFile())
 	r.Use(gin.Recovery())
 	r.GET("/ping", api.Ping)
+	r.GET("/ptt/beauty", ptt.Beauty)
 	return r
 }
