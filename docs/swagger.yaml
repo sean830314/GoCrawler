@@ -36,14 +36,19 @@ paths:
           schema:
             $ref: '#/definitions/app.Response'
       summary: Get Ping
-  /ptt/beauty:
+  /ptt/save-articles:
     get:
       parameters:
-      - description: Message
+      - description: BoardName
         in: query
-        name: message
+        name: board
         required: true
         type: string
+      - description: num of page
+        in: query
+        name: num_page
+        required: true
+        type: integer
       produces:
       - application/json
       responses:
@@ -55,7 +60,7 @@ paths:
           description: Internal Server Error
           schema:
             $ref: '#/definitions/app.Response'
-      summary: Download Beauty Image
+      summary: Download Article
 securityDefinitions:
   Bearer:
     in: header
