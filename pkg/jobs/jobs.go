@@ -3,6 +3,7 @@ package jobs
 import (
 	"fmt"
 
+	"github.com/sean830314/GoCrawler/pkg/nosql"
 	"github.com/sean830314/GoCrawler/pkg/service/ptt"
 	"github.com/sirupsen/logrus"
 )
@@ -12,32 +13,62 @@ type SaveArticlesJob struct {
 	NumPage int    `json:"num_page" form:"num_page" valid:"Range(1,100)"`
 }
 
-type PttArticleStruct struct {
-	meta ptt.BoardArticle
-	data ptt.Article
-}
-
 func (saj SaveArticlesJob) ExecSaveArtilcesJob() {
+	c := nosql.CassandraClient{
+		Host: "127.0.0.1",
+		Port: 9042,
+	}
+	c.InitCassandra()
 	pages, err := ptt.GetPagesFromBoard(saj.Board)
 	if err != nil {
 		logrus.Error(err)
 	}
+	count := 0
+	count_article := 0
 	for i := 0; i < saj.NumPage; i++ {
 		url := fmt.Sprintf("https://www.ptt.cc/bbs/%s/%s", saj.Board, fmt.Sprintf("index%d.html", pages-i))
 		articlesMeta, err := ptt.GetArticlesFromBoard(url)
 		if err != nil {
 			logrus.Error(err)
 		}
-		for i := 0; i < len(articlesMeta); i++ {
-			articleData, err := ptt.GetArticle(articlesMeta[i].Url)
+		articles := []nosql.PttArticle{}
+		for j := 0; j < len(articlesMeta); j++ {
+			count_article = count_article + 1
+			articleData, err := ptt.GetArticle(articlesMeta[j].Url)
 			if err != nil {
 				logrus.Error(err)
 			}
-			article := PttArticleStruct{
-				meta: *articlesMeta[i],
-				data: *articleData,
+			article := nosql.PttArticle{
+				Url:       articlesMeta[j].Url,
+				BoardName: articlesMeta[j].BoardName,
+				Title:     articleData.Title,
+				Author:    articleData.Author,
+				Date:      articleData.Date,
+				Content:   articleData.Content,
+				Ip:        articleData.Ip,
+				All:       articleData.All,
+				Count:     articleData.Count,
+				P:         articleData.P,
+				B:         articleData.B,
+				N:         articleData.N,
 			}
-			fmt.Printf("%v\n", article.meta)
+			comments := []nosql.PttComment{}
+			for k := 0; k < len(articleData.Comments); k++ {
+				comment := nosql.PttComment{
+					Url:            articlesMeta[j].Url,
+					PushTag:        articleData.Comments[k].PushTag,
+					PushUserID:     articleData.Comments[k].PushUserID,
+					PushContent:    articleData.Comments[k].PushContent,
+					PushIpdatetime: articleData.Comments[k].PushIpdatetime,
+				}
+				comments = append(comments, comment)
+			}
+			c.InsertArticleComments(comments)
+			count = count + len(comments)
+			articles = append(articles, article)
 		}
+		c.InsertArticles(articles)
 	}
+	fmt.Println(count)
+	fmt.Println(count_article)
 }
