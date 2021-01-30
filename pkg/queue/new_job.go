@@ -15,7 +15,7 @@ type RabbitmqConfig struct {
 	Password string
 }
 
-func (rc RabbitmqConfig) Producing(message string) {
+func (rc RabbitmqConfig) Producing(message []byte) {
 	conn, err := amqp.Dial(fmt.Sprintf("amqp://%s:%s@%s:%d/", rc.Account, rc.Password, rc.Host, rc.Port))
 	if err != nil {
 		logrus.Error(fmt.Sprintf("Failed to connect to RabbitMQ: %v", err))
@@ -48,7 +48,7 @@ func (rc RabbitmqConfig) Producing(message string) {
 		amqp.Publishing{
 			DeliveryMode: amqp.Persistent,
 			ContentType:  "text/plain",
-			Body:         []byte(body),
+			Body:         body,
 		})
 	if err != nil {
 		logrus.Error(fmt.Sprintf("Failed to publish a message: %v", err))

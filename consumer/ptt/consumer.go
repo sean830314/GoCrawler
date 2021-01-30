@@ -1,10 +1,10 @@
 package main
 
 import (
-	"bytes"
+	"encoding/json"
 	"fmt"
-	"time"
 
+	"github.com/sean830314/GoCrawler/pkg/jobs"
 	"github.com/sirupsen/logrus"
 	"github.com/streadway/amqp"
 )
@@ -61,9 +61,9 @@ func main() {
 	go func() {
 		for d := range msgs {
 			logrus.Info(fmt.Sprintf("Received a message: %v", string(d.Body)))
-			dot_count := bytes.Count(d.Body, []byte("."))
-			t := time.Duration(dot_count)
-			time.Sleep(t * time.Second)
+			var saveArticlesJob jobs.SaveArticlesJob
+			json.Unmarshal(d.Body, &saveArticlesJob)
+			saveArticlesJob.ExecSaveArtilcesJob()
 			logrus.Info("Done")
 			d.Ack(false)
 		}

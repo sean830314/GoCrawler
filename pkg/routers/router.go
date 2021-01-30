@@ -15,6 +15,6 @@ func InitRouter() *gin.Engine {
 	r.Use(middleware.LoggerToFile())
 	r.Use(gin.Recovery())
 	r.GET("/ping", api.Ping)
-	r.GET("/ptt/beauty", ptt.Beauty)
+	r.GET("/ptt/save-articles", ptt.SaveArticles)
 	return r
 }

@@ -55,17 +55,24 @@ var doc = `{
                 }
             }
         },
-        "/ptt/beauty": {
+        "/ptt/save-articles": {
             "get": {
                 "produces": [
                     "application/json"
                 ],
-                "summary": "Download Beauty Image",
+                "summary": "Download Article",
                 "parameters": [
                     {
                         "type": "string",
-                        "description": "Message",
-                        "name": "message",
+                        "description": "BoardName",
+                        "name": "board",
+                        "in": "query",
+                        "required": true
+                    },
+                    {
+                        "type": "integer",
+                        "description": "num of page",
+                        "name": "num_page",
                         "in": "query",
                         "required": true
                     }
