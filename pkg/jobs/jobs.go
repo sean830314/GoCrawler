@@ -6,6 +6,7 @@ import (
 	"github.com/sean830314/GoCrawler/pkg/nosql"
 	"github.com/sean830314/GoCrawler/pkg/service/ptt"
 	"github.com/sirupsen/logrus"
+	"github.com/spf13/viper"
 )
 
 type SaveArticlesJob struct {
@@ -15,8 +16,8 @@ type SaveArticlesJob struct {
 
 func (saj SaveArticlesJob) ExecSaveArtilcesJob() {
 	c := nosql.CassandraClient{
-		Host: "127.0.0.1",
-		Port: 9042,
+		Host: viper.GetString("cassandra.host"),
+		Port: viper.GetInt("cassandra.port"),
 	}
 	c.InitCassandra()
 	pages, err := ptt.GetPagesFromBoard(saj.Board)
