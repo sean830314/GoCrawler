@@ -1,7 +1,6 @@
 package main
 
 import (
-	//"fmt"
 	"bytes"
 	"errors"
 	"fmt"
@@ -54,7 +53,7 @@ func initLogger() {
 func mergeViperValueWithDefaultConfig() {
 
 	if err := viper.ReadInConfig(); err == nil {
-		logrus.Info("Using config file: %s", viper.ConfigFileUsed())
+		logrus.Info(fmt.Sprintf("Using config file: %s", viper.ConfigFileUsed()))
 	} else {
 		// load default config
 		viper.ReadConfig(bytes.NewBuffer(config.NewDefaultConfig()))
@@ -101,7 +100,7 @@ func main() {
 	endPoint := fmt.Sprintf("%s:%d", goCrawlerConfig.Server.Host, goCrawlerConfig.Server.Port)
 	routersInit := routers.InitRouter()
 	if mode := gin.Mode(); mode == gin.DebugMode {
-		swagURL := ginSwagger.URL(fmt.Sprintf("http://%s/swagger/doc.json", endPoint))
+		swagURL := ginSwagger.URL(fmt.Sprintf("http://localhost:%d/swagger/doc.json", goCrawlerConfig.Server.Port))
 		routersInit.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler, swagURL))
 	}
 	server := &http.Server{

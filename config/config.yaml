@@ -1,4 +1,12 @@
 server:
-  host: "localhost"
+  host: "127.0.0.1"
   port: 8080
   runMode: "debug"
+rabbitmq:
+  host: "127.0.0.1"
+  port: 5672
+  account: "guest"
+  password: "guest"
+cassandra:
+  host: "127.0.0.1"
+  port: 9042

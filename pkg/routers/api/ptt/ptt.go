@@ -9,6 +9,7 @@ import (
 	e "github.com/sean830314/GoCrawler/pkg/httputil"
 	"github.com/sean830314/GoCrawler/pkg/jobs"
 	"github.com/sean830314/GoCrawler/pkg/queue"
+	"github.com/spf13/viper"
 )
 
 // @Summary Download Article
@@ -22,10 +23,10 @@ func SaveArticles(c *gin.Context) {
 	appG := app.Gin{C: c}
 	var form jobs.SaveArticlesJob
 	rc := queue.RabbitmqConfig{
-		Host:     "localhost",
-		Port:     5672,
-		Account:  "guest",
-		Password: "guest",
+		Host:     viper.GetString("rabbitmq.host"),
+		Port:     viper.GetInt("rabbitmq.port"),
+		Account:  viper.GetString("rabbitmq.account"),
+		Password: viper.GetString("rabbitmq.password"),
 	}
 	httpCode, errCode := app.BindAndValid(c, &form)
 	if errCode != e.SUCCESS {
