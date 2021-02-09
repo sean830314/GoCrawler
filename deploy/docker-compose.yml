@@ -1,0 +1,51 @@
+version: '2.3'
+services:
+  rabbitmq:
+      networks:
+      - gocrawler-network
+      image: "rabbitmq"
+      restart: always
+  cassandra:
+      networks:
+      - gocrawler-network
+      image: "cassandra:latest"
+      restart: always
+  ptt-consumer:
+      depends_on:
+      - rabbitmq
+      - cassandra
+      networks:
+      - gocrawler-network
+      environment:
+      - GO_CRAWLER_RABBITMQ_HOST=rabbitmq
+      - GO_CRAWLER_RABBITMQ_PORT=5672
+      - GO_CRAWLER_RABBITMQ_ACCOUNT=guest
+      - GO_CRAWLER_RABBITMQ_PASSWORD=guest
+      - GO_CRAWLER_CASSANDRA_HOST=cassandra
+      - GO_CRAWLER_CASSANDRA_PORT=9042
+      image: "ekko771/ptt-crawler-consumer:latest"
+      restart: always
+  go-crawler-service:
+      depends_on:
+        - rabbitmq
+        - cassandra
+        - ptt-consumer
+      networks:
+      - gocrawler-network
+      ports:
+      - "8080:8080"
+      environment:
+      - GO_CRAWLER_SERVER_HOST=0.0.0.0
+      - GO_CRAWLER_SERVER_PORT=8080
+      - GO_CRAWLER_SERVER_debug=release
+      - GO_CRAWLER_RABBITMQ_HOST=rabbitmq
+      - GO_CRAWLER_RABBITMQ_PORT=5672
+      - GO_CRAWLER_RABBITMQ_ACCOUNT=guest
+      - GO_CRAWLER_RABBITMQ_PASSWORD=guest
+      - GO_CRAWLER_CASSANDRA_HOST=cassandra
+      - GO_CRAWLER_CASSANDRA_PORT=9042
+      image: "ekko771/go-crawler-service:latest"
+      restart: always
+networks:
+  gocrawler-network:
+    driver: bridge
