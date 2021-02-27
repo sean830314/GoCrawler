@@ -37,7 +37,6 @@ func processBatches(s *gocql.Session, in chan *gocql.Batch, wg *sync.WaitGroup) 
 		for {
 			if err := s.ExecuteBatch(batch); err != nil {
 				logrus.Info(fmt.Sprintf("Couldn't execute batch: %s", err))
-				continue // Keep trying on i/o error.
 			} else {
 				fmt.Println("=====================")
 				logrus.Info("Batch executed.")
@@ -49,7 +48,7 @@ func processBatches(s *gocql.Session, in chan *gocql.Batch, wg *sync.WaitGroup) 
 }
 
 func (c *CassandraClient) InsertArticles(articles []PttArticle) {
-	goroutines := 8
+	goroutines := 4
 	BatchSizeMaximum := 10
 	cluster := gocql.NewCluster(c.Host)
 	cluster.Port = c.Port
@@ -86,7 +85,7 @@ func (c *CassandraClient) InsertArticles(articles []PttArticle) {
 }
 
 func (c *CassandraClient) InsertArticleComments(comments []PttComment) {
-	goroutines := 8
+	goroutines := 4
 	BatchSizeMaximum := 10
 	cluster := gocql.NewCluster(c.Host)
 	cluster.Port = c.Port

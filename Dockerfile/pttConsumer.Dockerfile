@@ -1,8 +1,4 @@
-FROM golang:alpine AS build-env
-ADD . /src
-RUN cd /src && CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -o pttConsumer consumer/ptt/consumer.go
-
-FROM centurylink/ca-certs
+FROM golang:1.14 AS build-env
 LABEL maintainer="kroos.chen" \
       build-date={BUILD-DATE} \
       description="A consumer for ptt crawler of ptt." \
@@ -14,6 +10,7 @@ LABEL maintainer="kroos.chen" \
       vcs-type="git" \
       vendor="kroos.chen" \
       version={VERSION}
-COPY --from=build-env /src/pttConsumer /
-COPY --from=build-env /src/config/config.yaml /etc/GoCrawler/config.yaml
-CMD ["/pttConsumer"]
+ADD . /src
+RUN cd /src && CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -o pttConsumer consumer/ptt/consumer.go
+RUN  mkdir /etc/GoCrawler && cp /src/config/config.yaml /etc/GoCrawler/config.yaml
+CMD ["/src/pttConsumer"]

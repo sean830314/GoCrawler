@@ -3,6 +3,7 @@ package config
 type Configuration struct {
 	Server   ServerConfiguration   `yaml:"server"`
 	Rabbitmq RabbitMQConfiguration `yaml:"rabbitmq"`
+	Fluentd  FluentdConfiguration  `yaml:"fluentd"`
 }
 
 func NewDefaultConfig() []byte {
@@ -19,6 +20,9 @@ func NewDefaultConfig() []byte {
 		cassandra:
 			host: "127.0.0.1"
 			port: 9042
+		fluentd:
+			host: "127.0.0.1"
+			port: 24224
 		`)
 	return defaultConf
 }

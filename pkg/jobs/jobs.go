@@ -28,6 +28,7 @@ func (saj SaveArticlesJob) ExecSaveArtilcesJob() {
 	count_article := 0
 	for i := 0; i < saj.NumPage; i++ {
 		url := fmt.Sprintf("https://www.ptt.cc/bbs/%s/%s", saj.Board, fmt.Sprintf("index%d.html", pages-i))
+		logrus.Info("start crawling %s", url)
 		articlesMeta, err := ptt.GetArticlesFromBoard(url)
 		if err != nil {
 			logrus.Error(err)
@@ -69,7 +70,8 @@ func (saj SaveArticlesJob) ExecSaveArtilcesJob() {
 			articles = append(articles, article)
 		}
 		c.InsertArticles(articles)
+		logrus.Info("Done crawled %s", url)
 	}
-	fmt.Println(count)
-	fmt.Println(count_article)
+	logrus.Info("comments %d", count)
+	logrus.Info("article %d", count_article)
 }
