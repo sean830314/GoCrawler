@@ -55,3 +55,13 @@ PTT_CONSUMER_IMAGE_TAGS=latest make build-ptt-consumer-image
 cd deploy
 docker-compose up -d
 ```
+
+## Reference
+* [cassandra  docker](https://hub.docker.com/_/cassandra)
+* [cassandra cqlsh tutorial](https://www.tutorialspoint.com/cassandra/cassandra_cqlsh.htm)
+* [rabbitmq docker](https://hub.docker.com/_/rabbitmq)
+* [rabbitmq getstarted](https://www.rabbitmq.com/getstarted.html)
+* [mongodb docker](https://hub.docker.com/_/mongo)
+* [mongodb tutorial](https://www.tutorialspoint.com/mongodb/index.htm)
+* [fluent example](https://github.com/sean830314/service-tool-note/tree/master/fluentd)
+* [fluent-logger-golang github](https://github.com/fluent/fluent-logger-golang)
