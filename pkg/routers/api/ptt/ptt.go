@@ -6,9 +6,11 @@ import (
 
 	"github.com/gin-gonic/gin"
 	"github.com/sean830314/GoCrawler/pkg/app"
+	"github.com/sean830314/GoCrawler/pkg/fluentd"
 	e "github.com/sean830314/GoCrawler/pkg/httputil"
 	"github.com/sean830314/GoCrawler/pkg/jobs"
 	"github.com/sean830314/GoCrawler/pkg/queue"
+	"github.com/sirupsen/logrus"
 	"github.com/spf13/viper"
 )
 
@@ -34,6 +36,20 @@ func SaveArticles(c *gin.Context) {
 		return
 	}
 	jsondata, _ := json.Marshal(form)
+	// m := make(map[string]string)
+	var m map[string]interface{}
+	err := json.Unmarshal(jsondata, &m)
+	if err != nil {
+		logrus.Error("err: ", err)
+	} else {
+		logrus.Info("request is : ", m)
+		fd := fluentd.FluentdConfig{
+			Host: viper.GetString("fluentd.host"),
+			Port: viper.GetInt("fluentd.port"),
+		}
+		logrus.Info("fluentd host is : ", fd)
+		fd.FluentdToMongo(m)
+	}
 	rc.Producing(jsondata)
 	appG.Response(http.StatusOK, e.SUCCESS, "Download Success")
 }
