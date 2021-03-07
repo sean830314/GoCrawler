@@ -74,14 +74,14 @@ func main() {
 		logrus.Error(fmt.Sprintf("Failed to open a channel: %v", err))
 	}
 	defer ch.Close()
-
+	fmt.Println(fmt.Sprintf("%s_queue", goCrawlerConfig.Consumer.Type))
 	q, err := ch.QueueDeclare(
-		"task_queue", // name
-		true,         // durable
-		false,        // delete when unused
-		false,        // exclusive
-		false,        // no-wait
-		nil,          // arguments
+		fmt.Sprintf("%s_queue", goCrawlerConfig.Consumer.Type), // name
+		true,  // durable
+		false, // delete when unused
+		false, // exclusive
+		false, // no-wait
+		nil,   // arguments
 	)
 	if err != nil {
 		logrus.Error(fmt.Sprintf("Failed to declare a queue: %v", err))
@@ -110,17 +110,31 @@ func main() {
 	}
 
 	forever := make(chan bool)
-
-	go func() {
-		for d := range msgs {
-			logrus.Info(fmt.Sprintf("Received a message: %v", string(d.Body)))
-			var saveArticlesJob jobs.SaveArticlesJob
-			json.Unmarshal(d.Body, &saveArticlesJob)
-			saveArticlesJob.ExecSaveArtilcesJob()
-			logrus.Info("Done")
-			d.Ack(false)
-		}
-	}()
+	if goCrawlerConfig.Consumer.Type == "dcard" {
+		logrus.Info("Run dcard consumer")
+		go func() {
+			for d := range msgs {
+				logrus.Info(fmt.Sprintf("Received a message: %v", string(d.Body)))
+				var saveDcardArticlesJob jobs.SaveDcardArticlesJob
+				json.Unmarshal(d.Body, &saveDcardArticlesJob)
+				saveDcardArticlesJob.ExecSaveArtilcesJob()
+				logrus.Info("Done")
+				d.Ack(false)
+			}
+		}()
+	} else {
+		logrus.Info("Run ptt consumer")
+		go func() {
+			for d := range msgs {
+				logrus.Info(fmt.Sprintf("Received a message: %v", string(d.Body)))
+				var savePttArticlesJob jobs.SavePttArticlesJob
+				json.Unmarshal(d.Body, &savePttArticlesJob)
+				savePttArticlesJob.ExecSaveArtilcesJob()
+				logrus.Info("Done")
+				d.Ack(false)
+			}
+		}()
+	}
 	logrus.Info(" [*] Waiting for messages. To exit press CTRL+C")
 	<-forever
 }
