@@ -22,6 +22,45 @@ info:
   title: Golang Crawler API With Gin
   version: "1.0"
 paths:
+  /dcard/list-boards:
+    get:
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/app.Response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/app.Response'
+      summary: List Dcard Boards
+  /dcard/save-articles:
+    get:
+      parameters:
+      - description: BoardID
+        in: query
+        name: board_id
+        required: true
+        type: string
+      - description: num of article
+        in: query
+        name: num_article
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/app.Response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/app.Response'
+      summary: Download Article
   /ping:
     get:
       produces:
