@@ -4,17 +4,18 @@ import (
 	"fmt"
 
 	"github.com/sean830314/GoCrawler/pkg/nosql"
+	"github.com/sean830314/GoCrawler/pkg/service/dcard"
 	"github.com/sean830314/GoCrawler/pkg/service/ptt"
 	"github.com/sirupsen/logrus"
 	"github.com/spf13/viper"
 )
 
-type SaveArticlesJob struct {
+type SavePttArticlesJob struct {
 	Board   string `json:"board" form:"board" valid:"Required;MaxSize(100)"`
 	NumPage int    `json:"num_page" form:"num_page" valid:"Range(1,100)"`
 }
 
-func (saj SaveArticlesJob) ExecSaveArtilcesJob() {
+func (saj SavePttArticlesJob) ExecSaveArtilcesJob() {
 	c := nosql.CassandraClient{
 		Host: viper.GetString("cassandra.host"),
 		Port: viper.GetInt("cassandra.port"),
@@ -70,8 +71,47 @@ func (saj SaveArticlesJob) ExecSaveArtilcesJob() {
 			articles = append(articles, article)
 		}
 		c.InsertArticles(articles)
-		logrus.Info("Done crawled %s", url)
+		logrus.Info("Done crawled", url)
 	}
-	logrus.Info("comments %d", count)
-	logrus.Info("article %d", count_article)
+	logrus.Info("num of ptt comments", count)
+	logrus.Info("num of ptt article", count_article)
+}
+
+type SaveDcardArticlesJob struct {
+	BoardID    string `json:"board_id" form:"board_id" valid:"Required;MaxSize(100)"`
+	NumArticle int    `json:"num_article" form:"num_article" valid:"Range(1,100)"`
+}
+
+func (saj SaveDcardArticlesJob) ExecSaveArtilcesJob() {
+	// c := nosql.CassandraClient{
+	// 	Host: viper.GetString("cassandra.host"),
+	// 	Port: viper.GetInt("cassandra.port"),
+	// }
+	//c.InitCassandra()
+	boardURL := fmt.Sprintf("http://dcard.tw/_api/forums/%s/posts", saj.BoardID)
+	articles, err := dcard.GetArticlesFromBoard(boardURL)
+	if err != nil {
+		logrus.Error(err)
+	}
+	if articles != nil && len(articles) >= saj.NumArticle {
+		var urls []string
+		for i := 0; i < saj.NumArticle; i++ {
+			urls = append(urls, fmt.Sprintf("https://www.dcard.tw/_api/posts/%d", articles[i].ID))
+		}
+		logrus.Info("Crawling urls: ", urls)
+		for i := 0; i < len(urls); i++ {
+			logrus.Info("start crawling ", urls[i])
+			article, err := dcard.GetArticle(urls[i])
+			if err != nil {
+				logrus.Error(err)
+			}
+			commentURL := fmt.Sprintf("%s/comments", urls[i])
+			comments, err := dcard.GetComment(commentURL)
+			if err != nil {
+				logrus.Error(err)
+			}
+			logrus.Info(fmt.Sprintf("num of dcard article(%s) comment %d", article.ID, len(comments)))
+		}
+		logrus.Info("num of dcard article ", len(urls))
+	}
 }

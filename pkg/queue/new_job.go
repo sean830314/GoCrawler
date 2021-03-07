@@ -15,7 +15,7 @@ type RabbitmqConfig struct {
 	Password string
 }
 
-func (rc RabbitmqConfig) Producing(message []byte) {
+func (rc RabbitmqConfig) Producing(message []byte, queueName string) {
 	conn, err := amqp.Dial(fmt.Sprintf("amqp://%s:%s@%s:%d/", rc.Account, rc.Password, rc.Host, rc.Port))
 	if err != nil {
 		logrus.Error(fmt.Sprintf("Failed to connect to RabbitMQ: %v", err))
@@ -29,12 +29,12 @@ func (rc RabbitmqConfig) Producing(message []byte) {
 	defer ch.Close()
 
 	q, err := ch.QueueDeclare(
-		"task_queue", // name
-		true,         // durable
-		false,        // delete when unused
-		false,        // exclusive
-		false,        // no-wait
-		nil,          // arguments
+		queueName, // name
+		true,      // durable
+		false,     // delete when unused
+		false,     // exclusive
+		false,     // no-wait
+		nil,       // arguments
 	)
 	if err != nil {
 		logrus.Error(fmt.Sprintf("Failed to declare a queue: %v", err))

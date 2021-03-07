@@ -1,7 +1,8 @@
-package ptt
+package dcard
 
 import (
 	"encoding/json"
+	"fmt"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
@@ -10,20 +11,36 @@ import (
 	e "github.com/sean830314/GoCrawler/pkg/httputil"
 	"github.com/sean830314/GoCrawler/pkg/jobs"
 	"github.com/sean830314/GoCrawler/pkg/queue"
+	"github.com/sean830314/GoCrawler/pkg/service/dcard"
 	"github.com/sirupsen/logrus"
 	"github.com/spf13/viper"
 )
 
-// @Summary Download Article
+// @Summary List Dcard Boards
 // @Produce  json
-// @Param board query string true "BoardName"
-// @Param num_page query int true "num of page"
 // @Success 200 {object} app.Response
 // @Failure 500 {object} app.Response
-// @Router /ptt/save-articles [get]
+// @Router /dcard/list-boards [get]
+func ListBoards(c *gin.Context) {
+	appG := app.Gin{C: c}
+	boards, err := dcard.ListBoards()
+	if err != nil {
+		fmt.Println(err)
+	}
+	fmt.Println(boards)
+	appG.Response(http.StatusOK, e.SUCCESS, boards)
+}
+
+// @Summary Download Article
+// @Produce  json
+// @Param board_id query string true "BoardID"
+// @Param num_article query int true "num of article"
+// @Success 200 {object} app.Response
+// @Failure 500 {object} app.Response
+// @Router /dcard/save-articles [get]
 func SaveArticles(c *gin.Context) {
 	appG := app.Gin{C: c}
-	var form jobs.SavePttArticlesJob
+	var form jobs.SaveDcardArticlesJob
 	rc := queue.RabbitmqConfig{
 		Host:     viper.GetString("rabbitmq.host"),
 		Port:     viper.GetInt("rabbitmq.port"),
@@ -50,6 +67,6 @@ func SaveArticles(c *gin.Context) {
 		logrus.Info("fluentd host is : ", fd)
 		fd.FluentdToMongo(m)
 	}
-	rc.Producing(jsondata, "ptt_queue")
-	appG.Response(http.StatusOK, e.SUCCESS, "Send Ptt Download Job Success")
+	rc.Producing(jsondata, "dcard_queue")
+	appG.Response(http.StatusOK, e.SUCCESS, "Send Dcard Download Job Success")
 }

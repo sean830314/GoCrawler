@@ -4,6 +4,7 @@ type Configuration struct {
 	Server   ServerConfiguration   `yaml:"server"`
 	Rabbitmq RabbitMQConfiguration `yaml:"rabbitmq"`
 	Fluentd  FluentdConfiguration  `yaml:"fluentd"`
+	Consumer ConsumerConfiguration `yaml:"consumer"`
 }
 
 func NewDefaultConfig() []byte {
@@ -23,6 +24,8 @@ func NewDefaultConfig() []byte {
 		fluentd:
 			host: "127.0.0.1"
 			port: 24224
+		consumer:
+			type: "ptt"
 		`)
 	return defaultConf
 }
