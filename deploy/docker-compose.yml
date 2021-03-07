@@ -24,7 +24,25 @@ services:
     - GO_CRAWLER_CASSANDRA_HOST=cassandra
     - GO_CRAWLER_CASSANDRA_PORT=9042
     - GO_CRAWLER_SERVER_RUNMODE=debug
-    image: "ekko771/ptt-crawler-consumer:v1"
+    - GO_CRAWLER_CONSUMER_TYPE=ptt
+    image: "ekko771/crawler-consumer:v2"
+    restart: always
+  dcard-consumer:
+    depends_on:
+    - rabbitmq
+    - cassandra
+    networks:
+    - gocrawler-network
+    environment:
+    - GO_CRAWLER_RABBITMQ_HOST=rabbitmq
+    - GO_CRAWLER_RABBITMQ_PORT=5672
+    - GO_CRAWLER_RABBITMQ_ACCOUNT=guest
+    - GO_CRAWLER_RABBITMQ_PASSWORD=guest
+    - GO_CRAWLER_CASSANDRA_HOST=cassandra
+    - GO_CRAWLER_CASSANDRA_PORT=9042
+    - GO_CRAWLER_SERVER_RUNMODE=debug
+    - GO_CRAWLER_CONSUMER_TYPE=dcard
+    image: "ekko771/crawler-consumer:v2"
     restart: always
   go-crawler-service:
     depends_on:
@@ -49,7 +67,7 @@ services:
     - GO_CRAWLER_CASSANDRA_PORT=9042
     - GO_CRAWLER_FLUENTD_HOST=serverfluent
     - GO_CRAWLER_FLUENTD_PORT=24224
-    image: "ekko771/go-crawler-service:v1"
+    image: "ekko771/go-crawler-service:v2"
     restart: always
   mongo:
     image: mongo
