@@ -47,7 +47,7 @@ GOCRAWLER_IMAGE_TAGS=latest make build-gocrawler-service-image
 
 ### Build ptt-crawler-consumer images
 ```
-PTT_CONSUMER_IMAGE_TAGS=latest make build-ptt-consumer-image
+CONSUMER_IMAGE_TAGS=latest make build-ptt-consumer-image
 ```
 ## Deploy service with docker-compose
 ### deploy service with docker-compose
