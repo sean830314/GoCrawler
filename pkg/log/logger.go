@@ -41,24 +41,26 @@ func (f *colorFormatter) Format(entry *logrus.Entry) ([]byte, error) {
 func InitLogger(logPath string) {
 	logName := time.Now().Format("2006-01-02-15-04-05")
 	logLocation := filepath.Join(logPath, logName+".log")
-	color_formatter := &colorFormatter{logrus.TextFormatter{
-		DisableColors:   true,
-		ForceColors:     false,
-		TimestampFormat: "2006-01-02 15:04:05",
-	}}
+	// color_formatter := &colorFormatter{logrus.TextFormatter{
+	// 	DisableColors:   true,
+	// 	ForceColors:     false,
+	// 	TimestampFormat: "2006-01-02 15:04:05",
+	// }}
 	rotateFileHook, err := rotatefilehook.NewRotateFileHook(rotatefilehook.RotateFileConfig{
 		Filename:   logLocation,
 		MaxSize:    50,
 		MaxBackups: 3,
 		MaxAge:     7,
 		Level:      logrus.InfoLevel,
-		Formatter:  color_formatter,
+		// Formatter:  color_formatter,
+		Formatter: &logrus.JSONFormatter{},
 	})
 	if err != nil {
 		logrus.Fatalf("Failed to initialize file rotate hook: %v", err)
 	}
 	logrus.SetLevel(logrus.DebugLevel)
 	logrus.SetOutput(os.Stderr)
-	logrus.SetFormatter(color_formatter)
+	// logrus.SetFormatter(color_formatter)
+	logrus.SetFormatter(&logrus.JSONFormatter{})
 	logrus.AddHook(rotateFileHook)
 }

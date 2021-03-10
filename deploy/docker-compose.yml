@@ -25,7 +25,9 @@ services:
     - GO_CRAWLER_CASSANDRA_PORT=9042
     - GO_CRAWLER_SERVER_RUNMODE=debug
     - GO_CRAWLER_CONSUMER_TYPE=ptt
-    image: "ekko771/crawler-consumer:v2"
+    image: "ekko771/crawler-consumer:v4"
+    volumes:
+      - ./GoCrawler:/var/log/GoCrawler
     restart: always
   dcard-consumer:
     depends_on:
@@ -42,7 +44,9 @@ services:
     - GO_CRAWLER_CASSANDRA_PORT=9042
     - GO_CRAWLER_SERVER_RUNMODE=debug
     - GO_CRAWLER_CONSUMER_TYPE=dcard
-    image: "ekko771/crawler-consumer:v2"
+    image: "ekko771/crawler-consumer:v4"
+    volumes:
+      - ./GoCrawler:/var/log/GoCrawler
     restart: always
   go-crawler-service:
     depends_on:
@@ -67,7 +71,9 @@ services:
     - GO_CRAWLER_CASSANDRA_PORT=9042
     - GO_CRAWLER_FLUENTD_HOST=serverfluent
     - GO_CRAWLER_FLUENTD_PORT=24224
-    image: "ekko771/go-crawler-service:v2"
+    image: "ekko771/go-crawler-service:v4"
+    volumes:
+      - ./GoCrawler:/var/log/GoCrawler
     restart: always
   mongo:
     image: mongo
@@ -80,6 +86,7 @@ services:
     image: ekko771/fluentd-mogo:v1
     volumes:
       - ./fluentd/server_fluentd.conf:/fluentd/etc/fluent.conf
+      - ./GoCrawler:/var/log/GoCrawler
     ports: 
       - 24224:24224
     networks:
