@@ -18,7 +18,7 @@ func LoggerToFile() gin.HandlerFunc {
 		MaxBackups: 3,
 		MaxAge:     7,
 		Level:      logrus.InfoLevel,
-		Formatter:  &logrus.TextFormatter{},
+		Formatter:  &logrus.JSONFormatter{},
 	})
 	if err != nil {
 		logrus.Fatalf("Failed to initialize file rotate hook: %v", err)
