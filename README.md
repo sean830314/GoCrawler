@@ -12,23 +12,23 @@ cqlsh> desc keyspaces;
 ```
 ### Cassandra use keyspace
 ```
-cqlsh> use ptt_keyspace;
+cqlsh> use social_data;
 ```
 ### Cassandra list table
 ```
-cqlsh:ptt_keyspace> desc tables;
+cqlsh:social_data> desc tables;
 ```
 ### Cassandra list table schemas
 ```
-cqlsh:ptt_keyspace> desc table article;
+cqlsh:social_data> desc table ptt_article;
 ```
 ### Cassandra list table records
 ```
-cqlsh:ptt_keyspace> select * from article;
+cqlsh:social_data> select * from ptt_article;
 ```
 ### Cassandra count table records
 ```
-cqlsh:ptt_keyspace> select COUNT(*) from article;
+cqlsh:social_data> select COUNT(*) from ptt_article;
 ```
 ## Rabbitmq Command
 ### Run RabbitMQ Container
@@ -47,7 +47,7 @@ GOCRAWLER_IMAGE_TAGS=latest make build-gocrawler-service-image
 
 ### Build ptt-crawler-consumer images
 ```
-CONSUMER_IMAGE_TAGS=latest make build-ptt-consumer-image
+CONSUMER_IMAGE_TAGS=latest make build-consumer-image  
 ```
 ## Deploy service with docker-compose
 ### deploy service with docker-compose
