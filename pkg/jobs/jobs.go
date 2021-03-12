@@ -66,11 +66,11 @@ func (saj SavePttArticlesJob) ExecSaveArtilcesJob() {
 				}
 				comments = append(comments, comment)
 			}
-			c.InsertArticleComments(comments)
+			c.InsertData(comments)
 			count = count + len(comments)
 			articles = append(articles, article)
 		}
-		c.InsertArticles(articles)
+		c.InsertData(articles)
 		logrus.Info("Done crawled", url)
 	}
 	logrus.Info("num of ptt comments", count)
@@ -83,11 +83,11 @@ type SaveDcardArticlesJob struct {
 }
 
 func (saj SaveDcardArticlesJob) ExecSaveArtilcesJob() {
-	// c := nosql.CassandraClient{
-	// 	Host: viper.GetString("cassandra.host"),
-	// 	Port: viper.GetInt("cassandra.port"),
-	// }
-	//c.InitCassandra()
+	c := nosql.CassandraClient{
+		Host: viper.GetString("cassandra.host"),
+		Port: viper.GetInt("cassandra.port"),
+	}
+	c.InitCassandra()
 	boardURL := fmt.Sprintf("http://dcard.tw/_api/forums/%s/posts", saj.BoardID)
 	articles, err := dcard.GetArticlesFromBoard(boardURL)
 	if err != nil {
@@ -99,6 +99,7 @@ func (saj SaveDcardArticlesJob) ExecSaveArtilcesJob() {
 			urls = append(urls, fmt.Sprintf("https://www.dcard.tw/_api/posts/%d", articles[i].ID))
 		}
 		logrus.Info("Crawling urls: ", urls)
+		dcardArticles := []nosql.DcardArticle{}
 		for i := 0; i < len(urls); i++ {
 			logrus.Info("start crawling ", urls[i])
 			article, err := dcard.GetArticle(urls[i])
@@ -110,8 +111,42 @@ func (saj SaveDcardArticlesJob) ExecSaveArtilcesJob() {
 			if err != nil {
 				logrus.Error(err)
 			}
+			dcardComments := []nosql.DcardComment{}
+			for _, c := range comments {
+				dcardComment := nosql.DcardComment{
+					ID:         c.ID,
+					CommentURL: commentURL,
+					CreatedAt:  c.CreatedAt,
+					UpdatedAt:  c.UpdatedAt,
+					Floor:      c.Floor,
+					Content:    c.Content,
+					LikeCount:  c.LikeCount,
+					Gender:     c.Gender,
+					School:     c.School,
+				}
+				dcardComments = append(dcardComments, dcardComment)
+			}
+			c.InsertData(dcardComments)
 			logrus.Info(fmt.Sprintf("num of dcard article(%s) comment %d", article.ID, len(comments)))
+			dcardArticle := nosql.DcardArticle{
+				ID:           article.ID,
+				Title:        article.Title,
+				Content:      article.Content,
+				Excerpt:      article.Excerpt,
+				CreatedAt:    article.CreatedAt,
+				UpdatedAt:    article.UpdatedAt,
+				CommentCount: article.CommentCount,
+				ForumName:    article.ForumName,
+				ForumAlias:   article.ForumAlias,
+				Gender:       article.Gender,
+				School:       article.School,
+				LikeCount:    article.LikeCount,
+				Topics:       article.Topics,
+				Tags:         article.Tags,
+			}
+			dcardArticles = append(dcardArticles, dcardArticle)
 		}
+		c.InsertData(dcardArticles)
 		logrus.Info("num of dcard article ", len(urls))
 	}
 }
