@@ -52,11 +52,16 @@ CONSUMER_IMAGE_TAGS=latest make build-consumer-image
 ## Deploy service with docker-compose
 ### deploy service with docker-compose
 ```
+echo "127.0.0.1 gocrawler2.microservice.com\n127.0.0.1 gocrawler1.microservice.com" >> /etc/hosts
 cd deploy
+docker-compose -f traefik-docker-compose.yml up -d
 docker-compose up -d
 ```
 
 ## Reference
+* [traefik docs](https://doc.traefik.io/traefik/)
+* [traefik github](https://github.com/traefik/traefik)
+* [traefik 2.0 Example](https://github.com/DoTheEvo/Traefik-v2-examples)
 * [cassandra  docker](https://hub.docker.com/_/cassandra)
 * [cassandra cqlsh tutorial](https://www.tutorialspoint.com/cassandra/cassandra_cqlsh.htm)
 * [rabbitmq docker](https://hub.docker.com/_/rabbitmq)
