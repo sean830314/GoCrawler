@@ -1,21 +1,43 @@
 version: '2.3'
+
 services:
+
   rabbitmq:
     networks:
-    - gocrawler-network
+    - $DEFAULT_NETWORK
     image: "rabbitmq"
     restart: always
+
   cassandra:
     networks:
-    - gocrawler-network
+    - $DEFAULT_NETWORK
     image: "cassandra:latest"
     restart: always
+
+  mongo:
+    image: mongo
+    restart: always
+    ports: 
+      - 27017:27017
+    networks:
+    - $DEFAULT_NETWORK
+
+  serverfluent:
+    image: ekko771/fluentd-mogo:v1
+    volumes:
+      - ./fluentd/server_fluentd.conf:/fluentd/etc/fluent.conf
+      - ./GoCrawler:/var/log/GoCrawler
+    ports: 
+      - 24224:24224
+    networks:
+    - $DEFAULT_NETWORK
+
   ptt-consumer:
     depends_on:
     - rabbitmq
     - cassandra
     networks:
-    - gocrawler-network
+    - $DEFAULT_NETWORK
     environment:
     - GO_CRAWLER_RABBITMQ_HOST=rabbitmq
     - GO_CRAWLER_RABBITMQ_PORT=5672
@@ -34,7 +56,7 @@ services:
     - rabbitmq
     - cassandra
     networks:
-    - gocrawler-network
+    - $DEFAULT_NETWORK
     environment:
     - GO_CRAWLER_RABBITMQ_HOST=rabbitmq
     - GO_CRAWLER_RABBITMQ_PORT=5672
@@ -48,7 +70,8 @@ services:
     volumes:
       - ./GoCrawler:/var/log/GoCrawler
     restart: always
-  go-crawler-service:
+
+  go-crawler-service-1:
     depends_on:
       - rabbitmq
       - cassandra
@@ -56,9 +79,7 @@ services:
       - mongo
       - serverfluent
     networks:
-    - gocrawler-network
-    ports:
-    - "8080:8080"
+    - $DEFAULT_NETWORK
     environment:
     - GO_CRAWLER_SERVER_HOST=0.0.0.0
     - GO_CRAWLER_SERVER_PORT=8080
@@ -75,22 +96,44 @@ services:
     volumes:
       - ./GoCrawler:/var/log/GoCrawler
     restart: always
-  mongo:
-    image: mongo
-    restart: always
-    ports: 
-      - 27017:27017
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.go-crawler-service-1.entrypoints=web"
+      - "traefik.http.routers.go-crawler-service-1.rule=Host(`gocrawler1.$MY_DOMAIN`)"
+      - "traefik.http.services.go-crawler-service-1.loadbalancer.server.port=8080"
+
+  go-crawler-service-2:
+    depends_on:
+      - rabbitmq
+      - cassandra
+      - ptt-consumer
+      - mongo
+      - serverfluent
     networks:
-    - gocrawler-network
-  serverfluent:
-    image: ekko771/fluentd-mogo:v1
+    - $DEFAULT_NETWORK
+    environment:
+    - GO_CRAWLER_SERVER_HOST=0.0.0.0
+    - GO_CRAWLER_SERVER_PORT=8080
+    - GO_CRAWLER_SERVER_debug=release
+    - GO_CRAWLER_RABBITMQ_HOST=rabbitmq
+    - GO_CRAWLER_RABBITMQ_PORT=5672
+    - GO_CRAWLER_RABBITMQ_ACCOUNT=guest
+    - GO_CRAWLER_RABBITMQ_PASSWORD=guest
+    - GO_CRAWLER_CASSANDRA_HOST=cassandra
+    - GO_CRAWLER_CASSANDRA_PORT=9042
+    - GO_CRAWLER_FLUENTD_HOST=serverfluent
+    - GO_CRAWLER_FLUENTD_PORT=24224
+    image: "ekko771/go-crawler-service:v4"
     volumes:
-      - ./fluentd/server_fluentd.conf:/fluentd/etc/fluent.conf
       - ./GoCrawler:/var/log/GoCrawler
-    ports: 
-      - 24224:24224
-    networks:
-    - gocrawler-network
+    restart: always
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.go-crawler-service-2.entrypoints=web"
+      - "traefik.http.routers.go-crawler-service-2.rule=Host(`gocrawler2.$MY_DOMAIN`)"
+      - "traefik.http.services.go-crawler-service-2.loadbalancer.server.port=8080"
+
 networks:
-  gocrawler-network:
-    driver: bridge
+  traefik_net:
+    external:
+      name: $DEFAULT_NETWORK
