@@ -1,12 +1,37 @@
 
 # GoCrawler
+This service is a crawler for social platform data.
+* * *
+## MongoDB Command
+### Mongo exec mongo command
+```
+docker exec -it mongo bash
+root@6405f1f27115:/# mongo
+```
+### Mongo list databases
+```
+show databases;
+```
+### Mongo use database
+```
+use log_db;
+```
+### Mongo list tables
+```
+show tables;
+```
+### Mongo list table records
+```
+db.crawler_service.find();
+```
+* * *
 ## Cassandra Command
 ### Cassandra exec sql
 ```
 docker exec -it some-cassandra bash
 root@6405f1f27115:/# cqlsh
 ```
-### Cassandra list keyspace
+### Cassandra list keyspaces
 ```
 cqlsh> desc keyspaces;
 ```
@@ -30,6 +55,7 @@ cqlsh:social_data> select * from ptt_article;
 ```
 cqlsh:social_data> select COUNT(*) from ptt_article;
 ```
+* * *
 ## Rabbitmq Command
 ### Run RabbitMQ Container
 ```
@@ -39,6 +65,7 @@ docker run --name some-rabbitmq -p 5672:5672 -d rabbitmq:latest
 ```
 rabbitmqctl list_queues
 ```
+* * *
 ## Build images
 ### Build go-crawler-service images
 ```
@@ -50,11 +77,20 @@ GOCRAWLER_IMAGE_TAGS=latest make build-gocrawler-service-image
 CONSUMER_IMAGE_TAGS=latest make build-consumer-image  
 ```
 ## Deploy service with docker-compose
-### deploy service with docker-compose
+
+### Add domain name to /etc/hosts
 ```
 echo "127.0.0.1 gocrawler2.microservice.com\n127.0.0.1 gocrawler1.microservice.com" >> /etc/hosts
 cd deploy
+```
+* * *
+### Deploy traefik as reverse proxy
+```
+docker create network traefik_net
 docker-compose -f traefik-docker-compose.yml up -d
+```
+### Deploy app microservices with docker-compose
+```
 docker-compose up -d
 ```
 
