@@ -93,7 +93,13 @@ docker-compose -f traefik-docker-compose.yml up -d
 ```
 docker-compose up -d
 ```
-
+### Test 
+```
+http://gocrawler1.microservice.com/ping
+http://gocrawler2.microservice.com/ping
+http://gocrawler1.microservice.com/swagger/index.html
+http://gocrawler2.microservice.com/swagger/index.html
+```
 ## Reference
 * [traefik docs](https://doc.traefik.io/traefik/)
 * [traefik github](https://github.com/traefik/traefik)
