@@ -7,6 +7,7 @@ import (
 	"github.com/gin-gonic/gin"
 	opentracing "github.com/opentracing/opentracing-go"
 	"github.com/opentracing/opentracing-go/ext"
+	"github.com/opentracing/opentracing-go/log"
 	"github.com/sirupsen/logrus"
 	"github.com/spf13/viper"
 	jaeger "github.com/uber/jaeger-client-go"
@@ -41,10 +42,25 @@ func OpenTracing() gin.HandlerFunc {
 				)
 				defer parentSpan.Finish()
 			}
+			// subspan used
 			c.Set("Tracer", tracer)
 			c.Set("ParentSpanContext", parentSpan.Context())
+			// 記錄請求 Url
+			ext.HTTPUrl.Set(parentSpan, c.Request.URL.Path)
+			// Http Method
+			ext.HTTPMethod.Set(parentSpan, c.Request.Method)
+			// 記錄元件名稱
+			ext.Component.Set(parentSpan, "Gin-Http")
+			parentSpan.LogFields(
+				log.String("Path", c.Request.URL.Path),
+				log.String("Method", c.Request.Method))
+			// 在 header 中加上當前程序的上下文資訊
+			c.Request = c.Request.WithContext(opentracing.ContextWithSpan(c.Request.Context(), parentSpan))
+			ext.HTTPStatusCode.Set(parentSpan, uint16(c.Writer.Status()))
+			c.Next()
+		} else {
+			c.Next()
 		}
-		c.Next()
 	}
 }
 
