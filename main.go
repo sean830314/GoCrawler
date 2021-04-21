@@ -75,7 +75,6 @@ func mergeViperValueWithDefaultConfig() {
 @contact.email kroos0314@gmail.com
 @license.name Apache 2.0
 @license.url http://www.apache.org/licenses/LICENSE-2.0.html
-@host localhost:8080
 @query.collection.format multi
 @x-extension-openapi {"example": "value on a json format"}
 @securityDefinitions.apikey Bearer
@@ -100,7 +99,7 @@ func main() {
 	endPoint := fmt.Sprintf("%s:%d", goCrawlerConfig.Server.Host, goCrawlerConfig.Server.Port)
 	routersInit := routers.InitRouter()
 	if mode := gin.Mode(); mode == gin.DebugMode {
-		swagURL := ginSwagger.URL(fmt.Sprintf("http://localhost:%d/swagger/doc.json", goCrawlerConfig.Server.Port))
+		swagURL := ginSwagger.URL(fmt.Sprintf("http://%s:%d/swagger/doc.json", goCrawlerConfig.Server.Host, goCrawlerConfig.Server.Port))
 		routersInit.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler, swagURL))
 	}
 	server := &http.Server{
