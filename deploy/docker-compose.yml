@@ -1,7 +1,15 @@
 version: '2.3'
 
 services:
-
+  jaeger:
+    networks:
+    - $DEFAULT_NETWORK
+    image: "jaegertracing/all-in-one:latest"
+    restart: always
+    ports: 
+      - 16686:16686
+    environment:
+      - COLLECTOR_ZIPKIN_HTTP_PORT=9411
   rabbitmq:
     networks:
     - $DEFAULT_NETWORK
@@ -47,6 +55,9 @@ services:
     - GO_CRAWLER_CASSANDRA_PORT=9042
     - GO_CRAWLER_SERVER_RUNMODE=debug
     - GO_CRAWLER_CONSUMER_TYPE=ptt
+    - GO_CRAWLER_JAEGER_HOST=24224
+    - GO_CRAWLER_JAEGER_PORT=jaeger
+    - GO_CRAWLER_JAEGER_OPEN=true
     image: "ekko771/crawler-consumer:v4"
     volumes:
       - ./GoCrawler:/var/log/GoCrawler
@@ -66,6 +77,9 @@ services:
     - GO_CRAWLER_CASSANDRA_PORT=9042
     - GO_CRAWLER_SERVER_RUNMODE=debug
     - GO_CRAWLER_CONSUMER_TYPE=dcard
+    - GO_CRAWLER_JAEGER_HOST=24224
+    - GO_CRAWLER_JAEGER_PORT=jaeger
+    - GO_CRAWLER_JAEGER_OPEN=true
     image: "ekko771/crawler-consumer:v4"
     volumes:
       - ./GoCrawler:/var/log/GoCrawler
@@ -92,6 +106,9 @@ services:
     - GO_CRAWLER_CASSANDRA_PORT=9042
     - GO_CRAWLER_FLUENTD_HOST=serverfluent
     - GO_CRAWLER_FLUENTD_PORT=24224
+    - GO_CRAWLER_JAEGER_HOST=24224
+    - GO_CRAWLER_JAEGER_PORT=jaeger
+    - GO_CRAWLER_JAEGER_OPEN=true
     image: "ekko771/go-crawler-service:v4"
     volumes:
       - ./GoCrawler:/var/log/GoCrawler
@@ -123,6 +140,9 @@ services:
     - GO_CRAWLER_CASSANDRA_PORT=9042
     - GO_CRAWLER_FLUENTD_HOST=serverfluent
     - GO_CRAWLER_FLUENTD_PORT=24224
+    - GO_CRAWLER_JAEGER_HOST=24224
+    - GO_CRAWLER_JAEGER_PORT=jaeger
+    - GO_CRAWLER_JAEGER_OPEN=true
     image: "ekko771/go-crawler-service:v4"
     volumes:
       - ./GoCrawler:/var/log/GoCrawler
