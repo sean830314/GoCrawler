@@ -5,6 +5,7 @@ type Configuration struct {
 	Rabbitmq RabbitMQConfiguration `yaml:"rabbitmq"`
 	Fluentd  FluentdConfiguration  `yaml:"fluentd"`
 	Consumer ConsumerConfiguration `yaml:"consumer"`
+	Jaeger   JaegerConfiguration   `yaml:"jaeger"`
 }
 
 func NewDefaultConfig() []byte {
@@ -26,6 +27,10 @@ func NewDefaultConfig() []byte {
 			port: 24224
 		consumer:
 			type: "ptt"
+		jaeger:
+			open: true
+			host: "127.0.0.1"
+			port: 6831
 		`)
 	return defaultConf
 }
