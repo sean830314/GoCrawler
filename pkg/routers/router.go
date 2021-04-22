@@ -13,6 +13,7 @@ import (
 func InitRouter() *gin.Engine {
 	logrus.Info("start InitRouter")
 	r := gin.New()
+	r.Use(middleware.OpenTracing())
 	r.Use(middleware.LoggerToFile())
 	r.Use(gin.Recovery())
 	r.GET("/ping", api.Ping)

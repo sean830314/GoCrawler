@@ -15,3 +15,7 @@ fluentd:
   port: 24224
 consumer:
   type: "ptt"
+jaeger:
+  open: true
+  host: "127.0.0.1"
+  port: 6831

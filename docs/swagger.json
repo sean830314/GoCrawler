@@ -15,7 +15,6 @@
         },
         "version": "1.0"
     },
-    "host": "localhost:8080",
     "paths": {
         "/dcard/list-boards": {
             "get": {

@@ -9,6 +9,7 @@ require (
 	github.com/fluent/fluent-logger-golang v1.5.0
 	github.com/gin-gonic/gin v1.6.3
 	github.com/gocql/gocql v0.0.0-20210129204804-4364a4b9cfdd
+	github.com/opentracing/opentracing-go v1.2.0 // indirect
 	github.com/sirupsen/logrus v1.7.0
 	github.com/snowzach/rotatefilehook v0.0.0-20180327172521-2f64f265f58c
 	github.com/spf13/viper v1.7.1
@@ -16,5 +17,7 @@ require (
 	github.com/swaggo/gin-swagger v1.3.0
 	github.com/swaggo/swag v1.7.0
 	github.com/tinylib/msgp v1.1.5 // indirect
+	github.com/uber/jaeger-client-go v2.27.0+incompatible // indirect
+	github.com/uber/jaeger-lib v2.4.1+incompatible // indirect
 	gopkg.in/natefinch/lumberjack.v2 v2.0.0 // indirect
 )

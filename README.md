@@ -56,6 +56,12 @@ cqlsh:social_data> select * from ptt_article;
 cqlsh:social_data> select COUNT(*) from ptt_article;
 ```
 * * *
+## Jaeger
+### Deploy Jaeger on local
+```
+docker run -d --name jaeger  -e COLLECTOR_ZIPKIN_HTTP_PORT=9411 -p 5775:5775/udp -p 6831:6831/udp  -p 6832:6832/udp -p 5778:5778 -p 16686:16686 -p 14268:14268 -p 9411:9411 jaegertracing/all-in-one:latest
+```
+* * *
 ## Rabbitmq Command
 ### Run RabbitMQ Container
 ```
@@ -112,3 +118,5 @@ http://gocrawler2.microservice.com/swagger/index.html
 * [mongodb tutorial](https://www.tutorialspoint.com/mongodb/index.htm)
 * [fluent example](https://github.com/sean830314/service-tool-note/tree/master/fluentd)
 * [fluent-logger-golang github](https://github.com/fluent/fluent-logger-golang)
+* [jaeger & gin example](https://www.yisu.com/zixun/372364.html)
+* [opentracing-jaeger](https://jeremyxu2010.github.io/2018/07/%E7%A0%94%E7%A9%B6%E8%B0%83%E7%94%A8%E9%93%BE%E8%B7%9F%E8%B8%AA%E6%8A%80%E6%9C%AF%E4%B9%8Bjaeger/)
