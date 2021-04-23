@@ -1,0 +1,86 @@
+kind: pipeline
+name: default
+
+steps:
+- name: test
+  image: golang:1.16
+  commands:
+  - go test -v
+  when:
+    branch:
+      - master
+- name: build
+  image: golang:1.16
+  commands:
+  - go build
+  when:
+    branch:
+      - master
+- name: service-build&publish
+  image: plugins/docker
+  environment:
+    VERSION: 0.0.1
+    IMAGE: ekko771/go-crawler-service
+    VCS-REF: ${DRONE_COMMIT_SHA}
+    BUILD-DATE: ${DRONE_BUILD_CREATED}
+  settings:
+    repo: ekko771/go-crawler-service
+    tags: 
+      - "latest"
+      - ${DRONE_COMMIT_SHA:0:8}
+    username:
+      from_secret: docker_username
+    password:
+      from_secret: docker_password
+    force_tag: true
+    build_args_from_env:
+    - VERSION
+    - IMAGE
+    - VCS-REF
+    - BUILD-DATE
+    dockerfile: ./Dockerfile/goCrawler.Dockerfile
+    when:
+      branch:
+        - master
+- name: consumer-build&publish
+  image: plugins/docker
+  environment:
+    VERSION: 0.0.1
+    IMAGE: ekko771/crawler-consumer
+    VCS-REF: ${DRONE_COMMIT_SHA}
+    BUILD-DATE: ${DRONE_BUILD_CREATED}
+  settings:
+    repo: ekko771/crawler-consumer
+    tags: 
+      - "latest"
+      - ${DRONE_COMMIT_SHA:0:8}
+    username:
+      from_secret: docker_username
+    password:
+      from_secret: docker_password
+    force_tag: true
+    build_args_from_env:
+    - VERSION
+    - IMAGE
+    - VCS-REF
+    - BUILD-DATE
+    dockerfile: ./Dockerfile/Consumer.Dockerfile
+    when:
+      branch:
+        - master
+- name: fluentd-build&publish
+  image: plugins/docker
+  settings:
+    repo: ekko771/fluentd-mogo
+    tags: 
+      - "latest"
+      - ${DRONE_COMMIT_SHA:0:8}
+    username:
+      from_secret: docker_username
+    password:
+      from_secret: docker_password
+    force_tag: true
+    dockerfile: ./Dockerfile/fluentd.Dockerfile
+    when:
+      branch:
+        - master
