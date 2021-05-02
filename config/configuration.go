@@ -6,6 +6,7 @@ type Configuration struct {
 	Fluentd  FluentdConfiguration  `yaml:"fluentd"`
 	Consumer ConsumerConfiguration `yaml:"consumer"`
 	Jaeger   JaegerConfiguration   `yaml:"jaeger"`
+	Db       DBonfiguration        `yaml:"db"`
 }
 
 func NewDefaultConfig() []byte {
@@ -31,6 +32,16 @@ func NewDefaultConfig() []byte {
 			open: true
 			host: "127.0.0.1"
 			port: 6831
+		db:
+			host: "127.0.0.1"
+			port: 5432
+			user: "postgres"
+			password: "password"
+			dbname: "backend_admin"
+			sslmode: "disable"
+			sslcert: ""
+			sslkey: ""
+			sslrootcert: ""
 		`)
 	return defaultConf
 }
