@@ -2,6 +2,7 @@ package utils
 
 import (
 	"net/http"
+	"os"
 )
 
 func GetResponseWithCookie(url string) (*http.Response, error) {
@@ -17,4 +18,11 @@ func GetResponseWithCookie(url string) (*http.Response, error) {
 		return nil, err
 	}
 	return resp, err
+}
+
+func Env(key string, fallback string) string {
+	if v := os.Getenv(key); v != "" {
+		return v
+	}
+	return fallback
 }
