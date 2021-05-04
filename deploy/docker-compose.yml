@@ -10,10 +10,19 @@ services:
       - 16686:16686
     environment:
       - COLLECTOR_ZIPKIN_HTTP_PORT=9411
+
   rabbitmq:
     networks:
     - $DEFAULT_NETWORK
     image: "rabbitmq"
+    restart: always
+
+  postgres:
+    networks:
+    - $DEFAULT_NETWORK
+    image: "postgres:latest"
+    ports: 
+    - 5432:5432
     restart: always
 
   cassandra:
@@ -58,6 +67,8 @@ services:
     - GO_CRAWLER_JAEGER_HOST=24224
     - GO_CRAWLER_JAEGER_PORT=jaeger
     - GO_CRAWLER_JAEGER_OPEN=true
+    - GO_CRAWLER_DB_HOST=postgres
+    - GO_CRAWLER_DB_PORT=5432
     image: "ekko771/crawler-consumer:v4"
     volumes:
       - ./GoCrawler:/var/log/GoCrawler
@@ -80,6 +91,8 @@ services:
     - GO_CRAWLER_JAEGER_HOST=24224
     - GO_CRAWLER_JAEGER_PORT=jaeger
     - GO_CRAWLER_JAEGER_OPEN=true
+    - GO_CRAWLER_DB_HOST=postgres
+    - GO_CRAWLER_DB_PORT=5432
     image: "ekko771/crawler-consumer:v4"
     volumes:
       - ./GoCrawler:/var/log/GoCrawler
@@ -109,6 +122,8 @@ services:
     - GO_CRAWLER_JAEGER_HOST=24224
     - GO_CRAWLER_JAEGER_PORT=jaeger
     - GO_CRAWLER_JAEGER_OPEN=true
+    - GO_CRAWLER_DB_HOST=postgres
+    - GO_CRAWLER_DB_PORT=5432
     image: "ekko771/go-crawler-service:v4"
     volumes:
       - ./GoCrawler:/var/log/GoCrawler
@@ -143,6 +158,8 @@ services:
     - GO_CRAWLER_JAEGER_HOST=24224
     - GO_CRAWLER_JAEGER_PORT=jaeger
     - GO_CRAWLER_JAEGER_OPEN=true
+    - GO_CRAWLER_DB_HOST=postgres
+    - GO_CRAWLER_DB_PORT=5432
     image: "ekko771/go-crawler-service:v4"
     volumes:
       - ./GoCrawler:/var/log/GoCrawler
