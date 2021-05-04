@@ -120,3 +120,5 @@ http://gocrawler2.microservice.com/swagger/index.html
 * [fluent-logger-golang github](https://github.com/fluent/fluent-logger-golang)
 * [jaeger & gin example](https://www.yisu.com/zixun/372364.html)
 * [opentracing-jaeger](https://jeremyxu2010.github.io/2018/07/%E7%A0%94%E7%A9%B6%E8%B0%83%E7%94%A8%E9%93%BE%E8%B7%9F%E8%B8%AA%E6%8A%80%E6%9C%AF%E4%B9%8Bjaeger/)
+* [gin+gorm+router 快速搭建 crud restful API 接口](https://learnku.com/articles/23548/gingormrouter-quickly-build-crud-restful-api-interface)
+* [go-gin-example](https://github.com/eddycjy/go-gin-example)
