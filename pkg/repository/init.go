@@ -33,7 +33,19 @@ func Connect(cfg Config) (*gorm.DB, error) {
 		return nil, err
 	}
 
-	db.AutoMigrate(&model.Role{})
+	db.AutoMigrate(&model.Role{}, &model.User{})
 
 	return db.Debug(), nil
+}
+
+type repository struct {
+	Role model.RoleRepository
+	User model.UserRepository
+}
+
+func New(db *gorm.DB) repository {
+	return repository{
+		Role: NewRoleRepository(db),
+		User: NewUserRepository(db),
+	}
 }

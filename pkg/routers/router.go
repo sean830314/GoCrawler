@@ -25,5 +25,9 @@ func InitRouter() *gin.Engine {
 	r.POST("/admin/roles", admin.AddRole)
 	r.PUT("/admin/roles/:id", admin.UpdateRole)
 	r.DELETE("/admin/roles/:id", admin.DeleteRole)
+	r.GET("/admin/users", admin.ListUsers)
+	r.POST("/admin/users", admin.AddUser)
+	r.PUT("/admin/users/:id", admin.UpdateUser)
+	r.DELETE("/admin/users/:id", admin.DeleteUser)
 	return r
 }
