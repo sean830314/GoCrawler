@@ -69,7 +69,7 @@ func (repo *roleRepository) List(ctx context.Context) (res []*model.Role, err er
 	return
 }
 
-func New(db *gorm.DB) model.RoleRepository {
+func NewRoleRepository(db *gorm.DB) model.RoleRepository {
 	return &roleRepository{
 		mu: sync.RWMutex{},
 		db: db,

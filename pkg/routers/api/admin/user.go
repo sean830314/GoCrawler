@@ -17,12 +17,12 @@ import (
 	"github.com/unknwon/com"
 )
 
-// @Summary List Roles
+// @Summary List Users
 // @Produce  json
 // @Success 200 {object} app.Response
 // @Failure 500 {object} app.Response
-// @Router /admin/roles [get]
-func ListRoles(c *gin.Context) {
+// @Router /admin/users [get]
+func ListUsers(c *gin.Context) {
 	appG := app.Gin{C: c}
 	dbConfig := repository.Config{
 		Host:        utils.Env("GO_CRAWLER_DB_HOST", consts.DefDBHost),
@@ -41,7 +41,7 @@ func ListRoles(c *gin.Context) {
 		os.Exit(1)
 	}
 	repo := repository.New(db)
-	svc := admin.NewBasicRoleService(repo.Role)
+	svc := admin.NewBasicUserService(repo.User)
 	res, err := svc.List(c)
 	if err != nil {
 		logrus.Error("err", err)
@@ -49,21 +49,23 @@ func ListRoles(c *gin.Context) {
 	appG.Response(http.StatusOK, e.SUCCESS, res)
 }
 
-type AddRoleForm struct {
-	Name string `form:"name" valid:"Required;MaxSize(100)"`
-	Slug string `form:"slug" valid:"Required;MaxSize(255)"`
+type AddUserForm struct {
+	Name     string `form:"name" valid:"Required;MaxSize(100)"`
+	NickName string `form:"nickName" valid:"Required;MaxSize(255)"`
+	Role     string `form:"role" valid:"Required;MaxSize(255)"`
 }
 
-// @Summary Add Role
+// @Summary Add User
 // @Produce  json
 // @Param name formData string true "name"
-// @Param slug formData string true "slug"
+// @Param nickName formData string true "nick name"
+// @Param role formData string true "role"
 // @Success 200 {object} app.Response
 // @Failure 500 {object} app.Response
-// @Router /admin/roles [post]
-func AddRole(c *gin.Context) {
+// @Router /admin/users [post]
+func AddUser(c *gin.Context) {
 	appG := app.Gin{C: c}
-	var form AddRoleForm
+	var form AddUserForm
 	httpCode, errCode := app.BindAndValid(c, &form)
 	if errCode != httputil.SUCCESS {
 		appG.Response(httpCode, errCode, nil)
@@ -86,10 +88,11 @@ func AddRole(c *gin.Context) {
 		os.Exit(1)
 	}
 	repo := repository.New(db)
-	svc := admin.NewBasicRoleService(repo.Role)
-	req := model.RoleReq{
-		Name: &form.Name,
-		Slug: &form.Slug,
+	svc := admin.NewBasicUserService(repo.User)
+	req := model.UserReq{
+		Name:     &form.Name,
+		NickName: &form.NickName,
+		Role:     &form.Role,
 	}
 	res, err := svc.Add(c, &req)
 	if err != nil {
@@ -98,23 +101,25 @@ func AddRole(c *gin.Context) {
 	appG.Response(http.StatusOK, e.SUCCESS, res)
 }
 
-type UpdateRoleForm struct {
-	ID   string `form:"id" valid:"Required;MaxSize(100)"`
-	Name string `form:"name" valid:"Required;MaxSize(100)"`
-	Slug string `form:"slug" valid:"Required;MaxSize(100)"`
+type UpdateUserForm struct {
+	ID       string `form:"id" valid:"Required;MaxSize(100)"`
+	Name     string `form:"name" valid:"Required;MaxSize(100)"`
+	NickName string `form:"nickName" valid:"Required;MaxSize(255)"`
+	Role     string `form:"role" valid:"Required;MaxSize(255)"`
 }
 
-// @Summary Update Role
+// @Summary Update User
 // @Produce  json
 // @Param id path string true "id"
 // @Param name formData string true "name"
-// @Param slug formData string true "slug"
+// @Param nickName formData string true "nick name"
+// @Param role formData string true "role"
 // @Success 200 {object} app.Response
 // @Failure 500 {object} app.Response
-// @Router /admin/roles/{id} [put]
-func UpdateRole(c *gin.Context) {
+// @Router /admin/users/{id} [put]
+func UpdateUser(c *gin.Context) {
 	appG := app.Gin{C: c}
-	var form UpdateRoleForm
+	var form UpdateUserForm
 	form.ID = com.StrTo(c.Param("id")).String()
 	httpCode, errCode := app.BindAndValid(c, &form)
 	if errCode != httputil.SUCCESS {
@@ -138,10 +143,11 @@ func UpdateRole(c *gin.Context) {
 		os.Exit(1)
 	}
 	repo := repository.New(db)
-	svc := admin.NewBasicRoleService(repo.Role)
-	req := model.RoleReq{
-		Name: &form.Name,
-		Slug: &form.Slug,
+	svc := admin.NewBasicUserService(repo.User)
+	req := model.UserReq{
+		Name:     &form.Name,
+		NickName: &form.NickName,
+		Role:     &form.Role,
 	}
 	res, err := svc.Update(c, form.ID, &req)
 	if err != nil {
@@ -150,19 +156,19 @@ func UpdateRole(c *gin.Context) {
 	appG.Response(http.StatusOK, e.SUCCESS, res)
 }
 
-type DeleteRoleForm struct {
+type DeleteUserForm struct {
 	ID string `form:"id" valid:"Required;MaxSize(100)"`
 }
 
-// @Summary Delete Role
+// @Summary Delete User
 // @Produce  json
 // @Param id path string true "id"
 // @Success 200 {object} app.Response
 // @Failure 500 {object} app.Response
-// @Router /admin/roles/{id} [delete]
-func DeleteRole(c *gin.Context) {
+// @Router /admin/users/{id} [delete]
+func DeleteUser(c *gin.Context) {
 	appG := app.Gin{C: c}
-	var form DeleteRoleForm
+	var form DeleteUserForm
 	form.ID = com.StrTo(c.Param("id")).String()
 	httpCode, errCode := app.BindAndValid(c, &form)
 	if errCode != httputil.SUCCESS {
@@ -186,7 +192,7 @@ func DeleteRole(c *gin.Context) {
 		os.Exit(1)
 	}
 	repo := repository.New(db)
-	svc := admin.NewBasicRoleService(repo.Role)
+	svc := admin.NewBasicUserService(repo.User)
 	err = svc.Delete(c, form.ID)
 	if err != nil {
 		logrus.Error("err", err)
