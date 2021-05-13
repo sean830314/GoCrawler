@@ -21,7 +21,7 @@ info:
   title: Golang Crawler API With Gin
   version: "1.0"
 paths:
-  /admin/roles:
+  /api/v1/admin/roles:
     get:
       produces:
       - application/json
@@ -35,6 +35,8 @@ paths:
           schema:
             $ref: '#/definitions/app.Response'
       summary: List Roles
+      tags:
+      - Admin
     post:
       consumes:
       - multipart/form-data
@@ -61,7 +63,9 @@ paths:
           schema:
             $ref: '#/definitions/app.Response'
       summary: Add Role
-  /admin/roles/{id}:
+      tags:
+      - Admin
+  /api/v1/admin/roles/{id}:
     delete:
       parameters:
       - description: id
@@ -81,6 +85,8 @@ paths:
           schema:
             $ref: '#/definitions/app.Response'
       summary: Delete Role
+      tags:
+      - Admin
     put:
       consumes:
       - multipart/form-data
@@ -112,7 +118,9 @@ paths:
           schema:
             $ref: '#/definitions/app.Response'
       summary: Update Role
-  /admin/users:
+      tags:
+      - Admin
+  /api/v1/admin/users:
     get:
       produces:
       - application/json
@@ -126,6 +134,8 @@ paths:
           schema:
             $ref: '#/definitions/app.Response'
       summary: List Users
+      tags:
+      - Admin
     post:
       consumes:
       - multipart/form-data
@@ -157,7 +167,9 @@ paths:
           schema:
             $ref: '#/definitions/app.Response'
       summary: Add User
-  /admin/users/{id}:
+      tags:
+      - Admin
+  /api/v1/admin/users/{id}:
     delete:
       parameters:
       - description: id
@@ -177,6 +189,8 @@ paths:
           schema:
             $ref: '#/definitions/app.Response'
       summary: Delete User
+      tags:
+      - Admin
     put:
       consumes:
       - multipart/form-data
@@ -213,7 +227,9 @@ paths:
           schema:
             $ref: '#/definitions/app.Response'
       summary: Update User
-  /dcard/list-boards:
+      tags:
+      - Admin
+  /api/v1/crawler/dcard/list-boards:
     get:
       produces:
       - application/json
@@ -227,7 +243,9 @@ paths:
           schema:
             $ref: '#/definitions/app.Response'
       summary: List Dcard Boards
-  /dcard/save-articles:
+      tags:
+      - Crawler
+  /api/v1/crawler/dcard/save-articles:
     get:
       parameters:
       - description: BoardID
@@ -252,21 +270,9 @@ paths:
           schema:
             $ref: '#/definitions/app.Response'
       summary: Download Article
-  /ping:
-    get:
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: OK
-          schema:
-            $ref: '#/definitions/app.Response'
-        "500":
-          description: Internal Server Error
-          schema:
-            $ref: '#/definitions/app.Response'
-      summary: Get Ping
-  /ptt/save-articles:
+      tags:
+      - Crawler
+  /api/v1/crawler/ptt/save-articles:
     get:
       parameters:
       - description: BoardName
@@ -291,6 +297,22 @@ paths:
           schema:
             $ref: '#/definitions/app.Response'
       summary: Download Article
+      tags:
+      - Crawler
+  /api/v1/ping:
+    get:
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/app.Response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/app.Response'
+      summary: Get Ping
 securityDefinitions:
   Bearer:
     in: header

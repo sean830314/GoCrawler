@@ -33,10 +33,13 @@ var doc = `{
     "host": "{{.Host}}",
     "basePath": "{{.BasePath}}",
     "paths": {
-        "/admin/roles": {
+        "/api/v1/admin/roles": {
             "get": {
                 "produces": [
                     "application/json"
+                ],
+                "tags": [
+                    "Admin"
                 ],
                 "summary": "List Roles",
                 "responses": {
@@ -60,6 +63,9 @@ var doc = `{
                 ],
                 "produces": [
                     "application/json"
+                ],
+                "tags": [
+                    "Admin"
                 ],
                 "summary": "Add Role",
                 "parameters": [
@@ -94,13 +100,16 @@ var doc = `{
                 }
             }
         },
-        "/admin/roles/{id}": {
+        "/api/v1/admin/roles/{id}": {
             "put": {
                 "consumes": [
                     "multipart/form-data"
                 ],
                 "produces": [
                     "application/json"
+                ],
+                "tags": [
+                    "Admin"
                 ],
                 "summary": "Update Role",
                 "parameters": [
@@ -145,6 +154,9 @@ var doc = `{
                 "produces": [
                     "application/json"
                 ],
+                "tags": [
+                    "Admin"
+                ],
                 "summary": "Delete Role",
                 "parameters": [
                     {
@@ -171,10 +183,13 @@ var doc = `{
                 }
             }
         },
-        "/admin/users": {
+        "/api/v1/admin/users": {
             "get": {
                 "produces": [
                     "application/json"
+                ],
+                "tags": [
+                    "Admin"
                 ],
                 "summary": "List Users",
                 "responses": {
@@ -198,6 +213,9 @@ var doc = `{
                 ],
                 "produces": [
                     "application/json"
+                ],
+                "tags": [
+                    "Admin"
                 ],
                 "summary": "Add User",
                 "parameters": [
@@ -239,13 +257,16 @@ var doc = `{
                 }
             }
         },
-        "/admin/users/{id}": {
+        "/api/v1/admin/users/{id}": {
             "put": {
                 "consumes": [
                     "multipart/form-data"
                 ],
                 "produces": [
                     "application/json"
+                ],
+                "tags": [
+                    "Admin"
                 ],
                 "summary": "Update User",
                 "parameters": [
@@ -297,6 +318,9 @@ var doc = `{
                 "produces": [
                     "application/json"
                 ],
+                "tags": [
+                    "Admin"
+                ],
                 "summary": "Delete User",
                 "parameters": [
                     {
@@ -323,10 +347,13 @@ var doc = `{
                 }
             }
         },
-        "/dcard/list-boards": {
+        "/api/v1/crawler/dcard/list-boards": {
             "get": {
                 "produces": [
                     "application/json"
+                ],
+                "tags": [
+                    "Crawler"
                 ],
                 "summary": "List Dcard Boards",
                 "responses": {
@@ -345,10 +372,13 @@ var doc = `{
                 }
             }
         },
-        "/dcard/save-articles": {
+        "/api/v1/crawler/dcard/save-articles": {
             "get": {
                 "produces": [
                     "application/json"
+                ],
+                "tags": [
+                    "Crawler"
                 ],
                 "summary": "Download Article",
                 "parameters": [
@@ -383,32 +413,13 @@ var doc = `{
                 }
             }
         },
-        "/ping": {
+        "/api/v1/crawler/ptt/save-articles": {
             "get": {
                 "produces": [
                     "application/json"
                 ],
-                "summary": "Get Ping",
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "$ref": "#/definitions/app.Response"
-                        }
-                    },
-                    "500": {
-                        "description": "Internal Server Error",
-                        "schema": {
-                            "$ref": "#/definitions/app.Response"
-                        }
-                    }
-                }
-            }
-        },
-        "/ptt/save-articles": {
-            "get": {
-                "produces": [
-                    "application/json"
+                "tags": [
+                    "Crawler"
                 ],
                 "summary": "Download Article",
                 "parameters": [
@@ -427,6 +438,28 @@ var doc = `{
                         "required": true
                     }
                 ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/app.Response"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/app.Response"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/ping": {
+            "get": {
+                "produces": [
+                    "application/json"
+                ],
+                "summary": "Get Ping",
                 "responses": {
                     "200": {
                         "description": "OK",

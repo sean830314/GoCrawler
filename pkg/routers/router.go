@@ -14,20 +14,27 @@ import (
 func InitRouter() *gin.Engine {
 	logrus.Info("start InitRouter")
 	r := gin.New()
-	r.Use(middleware.OpenTracing())
-	r.Use(middleware.LoggerToFile())
-	r.Use(gin.Recovery())
-	r.GET("/ping", api.Ping)
-	r.GET("/ptt/save-articles", ptt.SaveArticles)
-	r.GET("/dcard/list-boards", dcard.ListBoards)
-	r.GET("/dcard/save-articles", dcard.SaveArticles)
-	r.GET("/admin/roles", admin.ListRoles)
-	r.POST("/admin/roles", admin.AddRole)
-	r.PUT("/admin/roles/:id", admin.UpdateRole)
-	r.DELETE("/admin/roles/:id", admin.DeleteRole)
-	r.GET("/admin/users", admin.ListUsers)
-	r.POST("/admin/users", admin.AddUser)
-	r.PUT("/admin/users/:id", admin.UpdateUser)
-	r.DELETE("/admin/users/:id", admin.DeleteUser)
+	v1 := r.Group("/api/v1")
+	adminApi := v1.Group("/admin")
+	{
+		adminApi.GET("/roles", admin.ListRoles)
+		adminApi.POST("/roles", admin.AddRole)
+		adminApi.PUT("/roles/:id", admin.UpdateRole)
+		adminApi.DELETE("/roles/:id", admin.DeleteRole)
+		adminApi.GET("/users", admin.ListUsers)
+		adminApi.POST("/users", admin.AddUser)
+		adminApi.PUT("/users/:id", admin.UpdateUser)
+		adminApi.DELETE("/users/:id", admin.DeleteUser)
+	}
+	v1.Use(middleware.OpenTracing())
+	v1.Use(middleware.LoggerToFile())
+	v1.Use(gin.Recovery())
+	v1.GET("/ping", api.Ping)
+	crawler := v1.Group("/crawler")
+	{
+		crawler.GET("/ptt/save-articles", ptt.SaveArticles)
+		crawler.GET("/dcard/list-boards", dcard.ListBoards)
+		crawler.GET("/dcard/save-articles", dcard.SaveArticles)
+	}
 	return r
 }

@@ -15,12 +15,13 @@ import (
 )
 
 // @Summary Download Article
+// @Tags Crawler
 // @Produce  json
 // @Param board query string true "BoardName"
 // @Param num_page query int true "num of page"
 // @Success 200 {object} app.Response
 // @Failure 500 {object} app.Response
-// @Router /ptt/save-articles [get]
+// @Router /api/v1/crawler/ptt/save-articles [get]
 func SaveArticles(c *gin.Context) {
 	appG := app.Gin{C: c}
 	var form jobs.SavePttArticlesJob

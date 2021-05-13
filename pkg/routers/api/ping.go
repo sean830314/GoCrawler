@@ -12,7 +12,7 @@ import (
 // @Produce  json
 // @Success 200 {object} app.Response
 // @Failure 500 {object} app.Response
-// @Router /ping [get]
+// @Router /api/v1/ping [get]
 func Ping(c *gin.Context) {
 	appG := app.Gin{C: c}
 	appG.Response(http.StatusOK, e.SUCCESS, "healthy")

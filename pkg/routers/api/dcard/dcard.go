@@ -17,10 +17,11 @@ import (
 )
 
 // @Summary List Dcard Boards
+// @Tags Crawler
 // @Produce  json
 // @Success 200 {object} app.Response
 // @Failure 500 {object} app.Response
-// @Router /dcard/list-boards [get]
+// @Router /api/v1/crawler/dcard/list-boards [get]
 func ListBoards(c *gin.Context) {
 	appG := app.Gin{C: c}
 	boards, err := dcard.ListBoards()
@@ -32,12 +33,13 @@ func ListBoards(c *gin.Context) {
 }
 
 // @Summary Download Article
+// @Tags Crawler
 // @Produce  json
 // @Param board_id query string true "BoardID"
 // @Param num_article query int true "num of article"
 // @Success 200 {object} app.Response
 // @Failure 500 {object} app.Response
-// @Router /dcard/save-articles [get]
+// @Router /api/v1/crawler/dcard/save-articles [get]
 func SaveArticles(c *gin.Context) {
 	appG := app.Gin{C: c}
 	var form jobs.SaveDcardArticlesJob
