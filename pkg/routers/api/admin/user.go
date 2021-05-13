@@ -18,10 +18,11 @@ import (
 )
 
 // @Summary List Users
+// @Tags Admin
 // @Produce  json
 // @Success 200 {object} app.Response
 // @Failure 500 {object} app.Response
-// @Router /admin/users [get]
+// @Router /api/v1/admin/users [get]
 func ListUsers(c *gin.Context) {
 	appG := app.Gin{C: c}
 	dbConfig := repository.Config{
@@ -56,6 +57,7 @@ type AddUserForm struct {
 }
 
 // @Summary Add User
+// @Tags Admin
 // @Produce  json
 // @Accept multipart/form-data
 // @Param name formData string true "name"
@@ -63,7 +65,7 @@ type AddUserForm struct {
 // @Param role formData string true "role"
 // @Success 200 {object} app.Response
 // @Failure 500 {object} app.Response
-// @Router /admin/users [post]
+// @Router /api/v1/admin/users [post]
 func AddUser(c *gin.Context) {
 	appG := app.Gin{C: c}
 	var form AddUserForm
@@ -110,6 +112,7 @@ type UpdateUserForm struct {
 }
 
 // @Summary Update User
+// @Tags Admin
 // @Produce  json
 // @Accept multipart/form-data
 // @Param id path string true "id"
@@ -118,7 +121,7 @@ type UpdateUserForm struct {
 // @Param role formData string true "role"
 // @Success 200 {object} app.Response
 // @Failure 500 {object} app.Response
-// @Router /admin/users/{id} [put]
+// @Router /api/v1/admin/users/{id} [put]
 func UpdateUser(c *gin.Context) {
 	appG := app.Gin{C: c}
 	var form UpdateUserForm
@@ -163,11 +166,12 @@ type DeleteUserForm struct {
 }
 
 // @Summary Delete User
+// @Tags Admin
 // @Produce  json
 // @Param id path string true "id"
 // @Success 200 {object} app.Response
 // @Failure 500 {object} app.Response
-// @Router /admin/users/{id} [delete]
+// @Router /api/v1/admin/users/{id} [delete]
 func DeleteUser(c *gin.Context) {
 	appG := app.Gin{C: c}
 	var form DeleteUserForm

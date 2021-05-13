@@ -18,10 +18,11 @@ import (
 )
 
 // @Summary List Roles
+// @Tags Admin
 // @Produce  json
 // @Success 200 {object} app.Response
 // @Failure 500 {object} app.Response
-// @Router /admin/roles [get]
+// @Router /api/v1/admin/roles [get]
 func ListRoles(c *gin.Context) {
 	appG := app.Gin{C: c}
 	dbConfig := repository.Config{
@@ -55,13 +56,14 @@ type AddRoleForm struct {
 }
 
 // @Summary Add Role
+// @Tags Admin
 // @Produce  json
 // @Accept multipart/form-data
 // @Param name formData string true "name"
 // @Param slug formData string true "slug"
 // @Success 200 {object} app.Response
 // @Failure 500 {object} app.Response
-// @Router /admin/roles [post]
+// @Router /api/v1/admin/roles [post]
 func AddRole(c *gin.Context) {
 	appG := app.Gin{C: c}
 	var form AddRoleForm
@@ -106,6 +108,7 @@ type UpdateRoleForm struct {
 }
 
 // @Summary Update Role
+// @Tags Admin
 // @Produce  json
 // @Accept multipart/form-data
 // @Param id path string true "id"
@@ -113,7 +116,7 @@ type UpdateRoleForm struct {
 // @Param slug formData string true "slug"
 // @Success 200 {object} app.Response
 // @Failure 500 {object} app.Response
-// @Router /admin/roles/{id} [put]
+// @Router /api/v1/admin/roles/{id} [put]
 func UpdateRole(c *gin.Context) {
 	appG := app.Gin{C: c}
 	var form UpdateRoleForm
@@ -157,11 +160,12 @@ type DeleteRoleForm struct {
 }
 
 // @Summary Delete Role
+// @Tags Admin
 // @Produce  json
 // @Param id path string true "id"
 // @Success 200 {object} app.Response
 // @Failure 500 {object} app.Response
-// @Router /admin/roles/{id} [delete]
+// @Router /api/v1/admin/roles/{id} [delete]
 func DeleteRole(c *gin.Context) {
 	appG := app.Gin{C: c}
 	var form DeleteRoleForm
