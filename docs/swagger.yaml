@@ -36,6 +36,8 @@ paths:
             $ref: '#/definitions/app.Response'
       summary: List Roles
     post:
+      consumes:
+      - multipart/form-data
       parameters:
       - description: name
         in: formData
@@ -80,6 +82,8 @@ paths:
             $ref: '#/definitions/app.Response'
       summary: Delete Role
     put:
+      consumes:
+      - multipart/form-data
       parameters:
       - description: id
         in: path
@@ -123,6 +127,8 @@ paths:
             $ref: '#/definitions/app.Response'
       summary: List Users
     post:
+      consumes:
+      - multipart/form-data
       parameters:
       - description: name
         in: formData
@@ -172,6 +178,8 @@ paths:
             $ref: '#/definitions/app.Response'
       summary: Delete User
     put:
+      consumes:
+      - multipart/form-data
       parameters:
       - description: id
         in: path

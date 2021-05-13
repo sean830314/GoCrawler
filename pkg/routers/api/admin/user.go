@@ -57,6 +57,7 @@ type AddUserForm struct {
 
 // @Summary Add User
 // @Produce  json
+// @Accept multipart/form-data
 // @Param name formData string true "name"
 // @Param nickName formData string true "nick name"
 // @Param role formData string true "role"
@@ -110,6 +111,7 @@ type UpdateUserForm struct {
 
 // @Summary Update User
 // @Produce  json
+// @Accept multipart/form-data
 // @Param id path string true "id"
 // @Param name formData string true "name"
 // @Param nickName formData string true "nick name"
