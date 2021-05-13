@@ -38,6 +38,9 @@
                 }
             },
             "post": {
+                "consumes": [
+                    "multipart/form-data"
+                ],
                 "produces": [
                     "application/json"
                 ],
@@ -76,6 +79,9 @@
         },
         "/admin/roles/{id}": {
             "put": {
+                "consumes": [
+                    "multipart/form-data"
+                ],
                 "produces": [
                     "application/json"
                 ],
@@ -170,6 +176,9 @@
                 }
             },
             "post": {
+                "consumes": [
+                    "multipart/form-data"
+                ],
                 "produces": [
                     "application/json"
                 ],
@@ -215,6 +224,9 @@
         },
         "/admin/users/{id}": {
             "put": {
+                "consumes": [
+                    "multipart/form-data"
+                ],
                 "produces": [
                     "application/json"
                 ],

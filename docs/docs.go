@@ -55,6 +55,9 @@ var doc = `{
                 }
             },
             "post": {
+                "consumes": [
+                    "multipart/form-data"
+                ],
                 "produces": [
                     "application/json"
                 ],
@@ -93,6 +96,9 @@ var doc = `{
         },
         "/admin/roles/{id}": {
             "put": {
+                "consumes": [
+                    "multipart/form-data"
+                ],
                 "produces": [
                     "application/json"
                 ],
@@ -187,6 +193,9 @@ var doc = `{
                 }
             },
             "post": {
+                "consumes": [
+                    "multipart/form-data"
+                ],
                 "produces": [
                     "application/json"
                 ],
@@ -232,6 +241,9 @@ var doc = `{
         },
         "/admin/users/{id}": {
             "put": {
+                "consumes": [
+                    "multipart/form-data"
+                ],
                 "produces": [
                     "application/json"
                 ],

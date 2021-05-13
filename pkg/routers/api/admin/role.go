@@ -56,6 +56,7 @@ type AddRoleForm struct {
 
 // @Summary Add Role
 // @Produce  json
+// @Accept multipart/form-data
 // @Param name formData string true "name"
 // @Param slug formData string true "slug"
 // @Success 200 {object} app.Response
@@ -106,6 +107,7 @@ type UpdateRoleForm struct {
 
 // @Summary Update Role
 // @Produce  json
+// @Accept multipart/form-data
 // @Param id path string true "id"
 // @Param name formData string true "name"
 // @Param slug formData string true "slug"
