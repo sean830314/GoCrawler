@@ -7,6 +7,7 @@ import (
 	"strings"
 
 	"github.com/sean830314/GoCrawler/pkg/utils"
+	"github.com/sirupsen/logrus"
 
 	"github.com/PuerkitoBio/goquery"
 )
@@ -63,7 +64,7 @@ func GetArticlesFromBoard(url string) ([]*BoardArticle, error) {
 		title := strings.Trim(s.Find("div.title").Text(), ": \t\n\r")
 		url, exists := s.Find("div.title").Find("a").Attr("href")
 		if !exists {
-			fmt.Println("url href is not exists")
+			logrus.Error("url href is not exists")
 		} else {
 			ba.Title = title
 			ba.Url = fmt.Sprintf("https://www.ptt.cc%s", url)

@@ -3,6 +3,7 @@ package nosql
 import (
 	"fmt"
 	"sync"
+	"time"
 
 	"github.com/gocql/gocql"
 	"github.com/sirupsen/logrus"
@@ -67,7 +68,6 @@ func processBatches(s *gocql.Session, in chan *gocql.Batch, wg *sync.WaitGroup) 
 			if err := s.ExecuteBatch(batch); err != nil {
 				logrus.Info(fmt.Sprintf("Couldn't execute batch: %s", err))
 			} else {
-				fmt.Println("=====================")
 				logrus.Info("Batch executed.")
 			}
 			break
@@ -83,6 +83,8 @@ func (c *CassandraClient) InsertData(obj interface{}) {
 	cluster.Port = c.Port
 	cluster.Keyspace = "social_data"
 	cluster.Consistency = gocql.Any
+	cluster.ProtoVersion = 4
+	cluster.ConnectTimeout = time.Second * 10
 	session, err := cluster.CreateSession()
 	if err != nil {
 		logrus.Error(err)

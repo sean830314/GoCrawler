@@ -11,6 +11,6 @@ LABEL maintainer="kroos.chen" \
       vendor="kroos.chen" \
       version={VERSION}
 ADD . /src
-RUN cd /src && CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -o pttConsumer consumer/ptt/consumer.go
+RUN cd /src && CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -o pttConsumer consumer/consumer.go
 RUN  mkdir /etc/GoCrawler && cp /src/config/config.yaml /etc/GoCrawler/config.yaml
 CMD ["/src/pttConsumer"]
