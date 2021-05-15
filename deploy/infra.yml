@@ -1,0 +1,63 @@
+version: '2.3'
+
+services:
+  jaeger:
+    networks:
+    - $DEFAULT_NETWORK
+    image: "jaegertracing/all-in-one:latest"
+    restart: always
+    ports: 
+      - 16686:16686
+      - 9411:9411
+      - 6831:6831/udp
+    environment:
+      - COLLECTOR_ZIPKIN_HTTP_PORT=9411
+
+  rabbitmq:
+    networks:
+    - $DEFAULT_NETWORK
+    image: "rabbitmq"
+    ports: 
+      - 5672:5672
+    restart: always
+
+  postgres:
+    networks:
+    - $DEFAULT_NETWORK
+    image: "postgres:latest"
+    ports: 
+    - 5432:5432
+    restart: always
+    environment:
+      POSTGRES_PASSWORD: password
+
+  cassandra:
+    networks:
+    - $DEFAULT_NETWORK
+    image: "cassandra:latest"
+    ports: 
+    - 9042:9042
+    restart: always
+
+  mongo:
+    image: mongo
+    restart: always
+    ports: 
+      - 27017:27017
+    networks:
+    - $DEFAULT_NETWORK
+
+  serverfluent:
+    image: ekko771/fluentd-mogo:v1
+    volumes:
+      - ./fluentd/server_fluentd.conf:/fluentd/etc/fluent.conf
+      - ./GoCrawler:/var/log/GoCrawler
+    ports: 
+      - 24224:24224
+    networks:
+    - $DEFAULT_NETWORK
+
+networks:
+  traefik_net:
+    external:
+      name: $DEFAULT_NETWORK

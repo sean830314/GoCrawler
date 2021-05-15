@@ -72,6 +72,19 @@ docker run --name some-rabbitmq -p 5672:5672 -d rabbitmq:latest
 rabbitmqctl list_queues
 ```
 * * *
+## Init stage
+
+### Deploy infra services
+```
+cd deploy && docker-compose -f infra.yml
+```
+### Init postgres databases
+```
+docker exec -it postgres bash
+psql -U postgres
+CREATE DATABASE backend_admin;
+```
+* * *
 ## Build images
 ### Build go-crawler-service images
 ```

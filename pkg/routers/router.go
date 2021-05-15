@@ -15,6 +15,10 @@ func InitRouter() *gin.Engine {
 	logrus.Info("start InitRouter")
 	r := gin.New()
 	v1 := r.Group("/api/v1")
+	v1.Use(middleware.OpenTracing())
+	v1.Use(middleware.LoggerToFile())
+	v1.Use(gin.Recovery())
+	v1.GET("/ping", api.Ping)
 	adminApi := v1.Group("/admin")
 	{
 		adminApi.GET("/roles", admin.ListRoles)
@@ -26,10 +30,6 @@ func InitRouter() *gin.Engine {
 		adminApi.PUT("/users/:id", admin.UpdateUser)
 		adminApi.DELETE("/users/:id", admin.DeleteUser)
 	}
-	v1.Use(middleware.OpenTracing())
-	v1.Use(middleware.LoggerToFile())
-	v1.Use(gin.Recovery())
-	v1.GET("/ping", api.Ping)
 	crawler := v1.Group("/crawler")
 	{
 		crawler.GET("/ptt/save-articles", ptt.SaveArticles)

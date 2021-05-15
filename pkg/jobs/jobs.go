@@ -127,7 +127,7 @@ func (saj SaveDcardArticlesJob) ExecSaveArtilcesJob() {
 				dcardComments = append(dcardComments, dcardComment)
 			}
 			c.InsertData(dcardComments)
-			logrus.Info(fmt.Sprintf("num of dcard article(%s) comment %d", article.ID, len(comments)))
+			logrus.Info(fmt.Sprintf("num of dcard article(%d) comment %d", article.ID, len(comments)))
 			dcardArticle := nosql.DcardArticle{
 				ID:           article.ID,
 				Title:        article.Title,
