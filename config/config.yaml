@@ -19,3 +19,10 @@ jaeger:
   open: true
   host: "127.0.0.1"
   port: 6831
+db:
+  host: "127.0.0.1"
+  port: 5432
+  user: "postgres"
+  password: "password"
+  dbname: "backend_admin"
+  sslmode: "disable"

@@ -7,10 +7,12 @@ require (
 	github.com/alecthomas/template v0.0.0-20190718012654-fb15b899a751
 	github.com/astaxie/beego v1.12.3
 	github.com/cpuguy83/go-md2man/v2 v2.0.0 // indirect
+	github.com/dgrijalva/jwt-go v3.2.0+incompatible
 	github.com/fluent/fluent-logger-golang v1.5.0
 	github.com/gin-gonic/gin v1.6.3
 	github.com/go-openapi/spec v0.20.3 // indirect
 	github.com/go-openapi/swag v0.19.15 // indirect
+	github.com/go-redis/redis/v7 v7.4.0
 	github.com/gocql/gocql v0.0.0-20210129204804-4364a4b9cfdd
 	github.com/mailru/easyjson v0.7.7 // indirect
 	github.com/matoous/go-nanoid v1.5.0 // indirect
@@ -23,6 +25,7 @@ require (
 	github.com/swaggo/gin-swagger v1.3.0
 	github.com/swaggo/swag v1.7.0
 	github.com/tinylib/msgp v1.1.5 // indirect
+	github.com/twinj/uuid v1.0.0
 	github.com/uber/jaeger-client-go v2.27.0+incompatible // indirect
 	github.com/uber/jaeger-lib v2.4.1+incompatible // indirect
 	github.com/unknwon/com v1.0.1 // indirect

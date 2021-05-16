@@ -15,12 +15,22 @@ type userRepository struct {
 	db *gorm.DB
 }
 
-func (repo *userRepository) Get(ctx context.Context, userID string) (res *model.User, err error) {
+func (repo *userRepository) GetById(ctx context.Context, userID string) (res *model.User, err error) {
 	repo.mu.Lock()
 	defer repo.mu.Unlock()
 
 	res = new(model.User)
 	err = repo.db.WithContext(ctx).Where("id", userID).Find(res).Error
+	return
+}
+
+func (repo *userRepository) Get(ctx context.Context, user *model.User) (res *model.User, err error) {
+	repo.mu.Lock()
+	defer repo.mu.Unlock()
+	err = repo.db.WithContext(ctx).Where("user_account = ? and user_password = ?", user.UserAccount, user.UserPassword).First(&res).Error
+	if err != nil {
+		return nil, err
+	}
 	return
 }
 
@@ -50,10 +60,12 @@ func (repo *userRepository) Update(ctx context.Context, user *model.User) error 
 
 	result := repo.db.WithContext(ctx).Model(&model.User{ID: user.ID}).UpdateColumns(
 		map[string]interface{}{
-			"name":       user.Name,
-			"nick_name":  user.NickName,
-			"role":       user.Role,
-			"updated_at": user.UpdatedAt,
+			"name":          user.Name,
+			"user_account":  user.UserAccount,
+			"user_password": user.UserPassword,
+			"nick_name":     user.NickName,
+			"role":          user.Role,
+			"updated_at":    user.UpdatedAt,
 		},
 	)
 	if result.Error != nil {

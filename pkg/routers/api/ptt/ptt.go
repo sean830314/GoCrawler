@@ -16,6 +16,7 @@ import (
 
 // @Summary Download Article
 // @Tags Crawler
+// @security Bearer
 // @Produce  json
 // @Param board query string true "BoardName"
 // @Param num_page query int true "num of page"
