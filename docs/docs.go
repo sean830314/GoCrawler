@@ -221,6 +221,20 @@ var doc = `{
                 "parameters": [
                     {
                         "type": "string",
+                        "description": "user account",
+                        "name": "userAccount",
+                        "in": "formData",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "user password",
+                        "name": "userPassword",
+                        "in": "formData",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
                         "description": "name",
                         "name": "name",
                         "in": "formData",
@@ -275,6 +289,20 @@ var doc = `{
                         "description": "id",
                         "name": "id",
                         "in": "path",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "user account",
+                        "name": "userAccount",
+                        "in": "formData",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "user password",
+                        "name": "userPassword",
+                        "in": "formData",
                         "required": true
                     },
                     {
@@ -347,8 +375,57 @@ var doc = `{
                 }
             }
         },
+        "/api/v1/auth/login": {
+            "post": {
+                "consumes": [
+                    "multipart/form-data"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Auth"
+                ],
+                "summary": "Get User",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "user account",
+                        "name": "userAccount",
+                        "in": "formData",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "user password",
+                        "name": "userPassword",
+                        "in": "formData",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/app.Response"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/app.Response"
+                        }
+                    }
+                }
+            }
+        },
         "/api/v1/crawler/dcard/list-boards": {
             "get": {
+                "security": [
+                    {
+                        "Bearer": []
+                    }
+                ],
                 "produces": [
                     "application/json"
                 ],
@@ -374,6 +451,11 @@ var doc = `{
         },
         "/api/v1/crawler/dcard/save-articles": {
             "get": {
+                "security": [
+                    {
+                        "Bearer": []
+                    }
+                ],
                 "produces": [
                     "application/json"
                 ],
@@ -415,6 +497,11 @@ var doc = `{
         },
         "/api/v1/crawler/ptt/save-articles": {
             "get": {
+                "security": [
+                    {
+                        "Bearer": []
+                    }
+                ],
                 "produces": [
                     "application/json"
                 ],

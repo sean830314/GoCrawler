@@ -12,6 +12,8 @@ import (
 // UserService describes the service.
 type UserService interface {
 	// [method=get,expose=true,router=items]
+	Get(ctx context.Context, user *model.UserReq) (res *model.UserRes, err error)
+	// [method=get,expose=true,router=items]
 	List(ctx context.Context) (res []*model.UserRes, err error)
 	// [method=post,expose=true,router=items]
 	Add(ctx context.Context, user *model.UserReq) (res *model.UserRes, err error)
@@ -25,6 +27,23 @@ type basicUserService struct {
 	repo model.UserRepository
 }
 
+func (b *basicUserService) Get(ctx context.Context, user *model.UserReq) (res *model.UserRes, err error) {
+	span, ctx := opentracing.StartSpanFromContext(ctx, "Get")
+	defer span.Finish()
+	u := new(model.User)
+	if user.UserAccount != nil {
+		u.UserAccount = *user.UserAccount
+	}
+	if user.UserPassword != nil {
+		u.UserPassword = *user.UserPassword
+	}
+	r, err := b.repo.Get(ctx, u)
+	if err != nil {
+		return nil, err
+	}
+	userRes := model.UserRes(*r)
+	return &userRes, nil
+}
 func (b *basicUserService) List(ctx context.Context) (res []*model.UserRes, err error) {
 	span, ctx := opentracing.StartSpanFromContext(ctx, "List")
 	defer span.Finish()
@@ -49,6 +68,12 @@ func (b *basicUserService) Add(ctx context.Context, user *model.UserReq) (res *m
 	t.ID = id
 	t.CreatedAt = time.Now()
 	t.UpdatedAt = time.Now()
+	if user.UserAccount != nil {
+		t.UserAccount = *user.UserAccount
+	}
+	if user.UserPassword != nil {
+		t.UserPassword = *user.UserPassword
+	}
 	if user.Name != nil {
 		t.Name = *user.Name
 	}
@@ -66,7 +91,7 @@ func (b *basicUserService) Add(ctx context.Context, user *model.UserReq) (res *m
 }
 func (b *basicUserService) Update(ctx context.Context, id string, user *model.UserReq) (res *model.UserRes, err error) {
 	// TODO implement the business logic of Update
-	dt, err := b.repo.Get(ctx, id)
+	dt, err := b.repo.GetById(ctx, id)
 	if err != nil {
 		return nil, err
 	}
@@ -77,6 +102,12 @@ func (b *basicUserService) Update(ctx context.Context, id string, user *model.Us
 	}
 	if user.NickName != nil {
 		dt.NickName = *user.NickName
+	}
+	if user.UserAccount != nil {
+		dt.UserAccount = *user.UserAccount
+	}
+	if user.UserPassword != nil {
+		dt.UserPassword = *user.UserPassword
 	}
 	if user.Role != nil {
 		dt.Role = *user.Role

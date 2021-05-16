@@ -18,6 +18,7 @@ import (
 
 // @Summary List Dcard Boards
 // @Tags Crawler
+// @security Bearer
 // @Produce  json
 // @Success 200 {object} app.Response
 // @Failure 500 {object} app.Response
@@ -34,6 +35,7 @@ func ListBoards(c *gin.Context) {
 
 // @Summary Download Article
 // @Tags Crawler
+// @security Bearer
 // @Produce  json
 // @Param board_id query string true "BoardID"
 // @Param num_article query int true "num of article"

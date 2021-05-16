@@ -19,6 +19,10 @@ func InitRouter() *gin.Engine {
 	v1.Use(middleware.LoggerToFile())
 	v1.Use(gin.Recovery())
 	v1.GET("/ping", api.Ping)
+	authApi := v1.Group("/auth")
+	{
+		authApi.POST("/login", admin.Login)
+	}
 	adminApi := v1.Group("/admin")
 	{
 		adminApi.GET("/roles", admin.ListRoles)
@@ -31,6 +35,7 @@ func InitRouter() *gin.Engine {
 		adminApi.DELETE("/users/:id", admin.DeleteUser)
 	}
 	crawler := v1.Group("/crawler")
+	crawler.Use(middleware.TokenAuthMiddleware())
 	{
 		crawler.GET("/ptt/save-articles", ptt.SaveArticles)
 		crawler.GET("/dcard/list-boards", dcard.ListBoards)
