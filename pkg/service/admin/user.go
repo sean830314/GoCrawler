@@ -12,6 +12,8 @@ import (
 // UserService describes the service.
 type UserService interface {
 	// [method=get,expose=true,router=items]
+	GetById(ctx context.Context, id string) (res *model.UserRes, err error)
+	// [method=get,expose=true,router=items]
 	Get(ctx context.Context, user *model.UserReq) (res *model.UserRes, err error)
 	// [method=get,expose=true,router=items]
 	List(ctx context.Context) (res []*model.UserRes, err error)
@@ -25,6 +27,17 @@ type UserService interface {
 
 type basicUserService struct {
 	repo model.UserRepository
+}
+
+func (b *basicUserService) GetById(ctx context.Context, id string) (res *model.UserRes, err error) {
+	span, ctx := opentracing.StartSpanFromContext(ctx, "Get")
+	defer span.Finish()
+	r, err := b.repo.GetById(ctx, id)
+	if err != nil {
+		return nil, err
+	}
+	userRes := model.UserRes(*r)
+	return &userRes, nil
 }
 
 func (b *basicUserService) Get(ctx context.Context, user *model.UserReq) (res *model.UserRes, err error) {
@@ -44,6 +57,7 @@ func (b *basicUserService) Get(ctx context.Context, user *model.UserReq) (res *m
 	userRes := model.UserRes(*r)
 	return &userRes, nil
 }
+
 func (b *basicUserService) List(ctx context.Context) (res []*model.UserRes, err error) {
 	span, ctx := opentracing.StartSpanFromContext(ctx, "List")
 	defer span.Finish()
@@ -60,6 +74,7 @@ func (b *basicUserService) List(ctx context.Context) (res []*model.UserRes, err 
 	}
 	return
 }
+
 func (b *basicUserService) Add(ctx context.Context, user *model.UserReq) (res *model.UserRes, err error) {
 	// TODO implement the business logic of Add
 	id, _ := gonanoid.ID(21)
@@ -89,6 +104,7 @@ func (b *basicUserService) Add(ctx context.Context, user *model.UserReq) (res *m
 	x := model.UserRes(*t)
 	return &x, nil
 }
+
 func (b *basicUserService) Update(ctx context.Context, id string, user *model.UserReq) (res *model.UserRes, err error) {
 	// TODO implement the business logic of Update
 	dt, err := b.repo.GetById(ctx, id)
@@ -118,6 +134,7 @@ func (b *basicUserService) Update(ctx context.Context, id string, user *model.Us
 	x := model.UserRes(*dt)
 	return &x, nil
 }
+
 func (b *basicUserService) Delete(ctx context.Context, id string) (err error) {
 	// TODO implement the business logic of Delete
 	return b.repo.Delete(ctx, id)

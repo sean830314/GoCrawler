@@ -7,6 +7,7 @@ type Configuration struct {
 	Consumer ConsumerConfiguration `yaml:"consumer"`
 	Jaeger   JaegerConfiguration   `yaml:"jaeger"`
 	Db       DBonfiguration        `yaml:"db"`
+	Redis    RedisConfiguration    `yaml:"redis"`
 }
 
 func NewDefaultConfig() []byte {
@@ -42,6 +43,11 @@ func NewDefaultConfig() []byte {
 			sslcert: ""
 			sslkey: ""
 			sslrootcert: ""
+		redis:
+			host: "127.0.0.1"
+			port: 6379
+			password: ""
+			db: 0
 		`)
 	return defaultConf
 }

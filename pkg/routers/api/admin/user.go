@@ -6,7 +6,6 @@ import (
 
 	"github.com/gin-gonic/gin"
 	"github.com/sean830314/GoCrawler/pkg/app"
-	"github.com/sean830314/GoCrawler/pkg/auth"
 	"github.com/sean830314/GoCrawler/pkg/consts"
 	"github.com/sean830314/GoCrawler/pkg/httputil"
 	e "github.com/sean830314/GoCrawler/pkg/httputil"
@@ -17,70 +16,6 @@ import (
 	"github.com/sirupsen/logrus"
 	"github.com/unknwon/com"
 )
-
-var tokenManager = auth.TokenManager{}
-
-type LoginForm struct {
-	UserAccount  string `form:"userAccount" valid:"Required;MaxSize(100)"`
-	UserPassword string `form:"userPassword" valid:"Required;MaxSize(100)"`
-}
-
-// @Summary Get User
-// @Tags Auth
-// @Produce  json
-// @Accept multipart/form-data
-// @Param userAccount formData string true "user account"
-// @Param userPassword formData string true "user password"
-// @Success 200 {object} app.Response
-// @Failure 500 {object} app.Response
-// @Router /api/v1/auth/login [post]
-func Login(c *gin.Context) {
-	appG := app.Gin{C: c}
-	var form LoginForm
-	httpCode, errCode := app.BindAndValid(c, &form)
-	if errCode != httputil.SUCCESS {
-		appG.Response(httpCode, errCode, nil)
-		return
-	}
-	dbConfig := repository.Config{
-		Host:        utils.Env("GO_CRAWLER_DB_HOST", consts.DefDBHost),
-		Port:        utils.Env("GO_CRAWLER_DB_PORT", consts.DefDBPort),
-		User:        utils.Env("GO_CRAWLER_DB_USER", consts.DefDBUser),
-		Pass:        utils.Env("GO_CRAWLER_DB_PASSWORD", consts.DefDBPass),
-		Name:        utils.Env("GO_CRAWLER_DB_DBNAME", consts.DefDBName),
-		SSLMode:     utils.Env("GO_CRAWLER_DB_SSLMODEL", consts.DefDBSSLMode),
-		SSLCert:     utils.Env("GO_CRAWLER_DB_SSLCERT", consts.DefDBSSLCert),
-		SSLKey:      utils.Env("GO_CRAWLER_DB_SSLKEY", consts.DefDBSSLKey),
-		SSLRootCert: utils.Env("GO_CRAWLER_DB_SSLROOTCERT", consts.DefDBSSLRootCert),
-	}
-	db, err := repository.Connect(dbConfig)
-	if err != nil {
-		logrus.Error("error: ", err)
-		os.Exit(1)
-	}
-	repo := repository.New(db)
-	svc := admin.NewBasicUserService(repo.User)
-	req := model.UserReq{
-		UserAccount:  &form.UserAccount,
-		UserPassword: &form.UserPassword,
-	}
-	res, err := svc.Get(c, &req)
-	if err != nil {
-		logrus.Error("error: ", err)
-		appG.Response(http.StatusBadRequest, e.INVALID_PARAMS, err.Error())
-		return
-	}
-	ts, err := tokenManager.CreateToken(res.ID, res.UserAccount)
-	if err != nil {
-		appG.Response(http.StatusBadRequest, e.ERROR, err.Error())
-		return
-	}
-	tokens := map[string]string{
-		"access_token":  ts.AccessToken,
-		"refresh_token": ts.RefreshToken,
-	}
-	appG.Response(http.StatusOK, e.SUCCESS, tokens)
-}
 
 // @Summary List Users
 // @Tags Admin
