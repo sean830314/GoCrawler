@@ -1,6 +1,14 @@
 version: '2.3'
 
 services:
+  redis:
+    networks:
+    - $DEFAULT_NETWORK
+    image: "redis:latest"
+    restart: always
+    ports: 
+      - 6379:6379
+
   jaeger:
     networks:
     - $DEFAULT_NETWORK

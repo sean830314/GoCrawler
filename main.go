@@ -4,19 +4,15 @@ import (
 	"bytes"
 	"errors"
 	"fmt"
-	"net/http"
 	"strings"
 
-	"github.com/gin-gonic/gin"
 	"github.com/sean830314/GoCrawler/config"
 	_ "github.com/sean830314/GoCrawler/docs"
 	"github.com/sean830314/GoCrawler/pkg/consts"
 	"github.com/sean830314/GoCrawler/pkg/log"
-	"github.com/sean830314/GoCrawler/pkg/routers"
+	"github.com/sean830314/GoCrawler/pkg/servers"
 	"github.com/sirupsen/logrus"
 	"github.com/spf13/viper"
-	ginSwagger "github.com/swaggo/gin-swagger"
-	"github.com/swaggo/gin-swagger/swaggerFiles"
 )
 
 var (
@@ -26,6 +22,10 @@ var (
 func init() {
 	initLogger()
 	initConfiguration()
+}
+
+func initLogger() {
+	log.InitLogger(consts.DefaultLogOutputPath)
 }
 
 func initConfiguration() {
@@ -47,9 +47,6 @@ func initViperSetting() {
 
 }
 
-func initLogger() {
-	log.InitLogger(consts.DefaultLogOutputPath)
-}
 func mergeViperValueWithDefaultConfig() {
 
 	if err := viper.ReadInConfig(); err == nil {
@@ -85,26 +82,5 @@ func main() {
 	logrus.Info(fmt.Sprintf("host for this service is %s", goCrawlerConfig.Server.Host))
 	logrus.Info(fmt.Sprintf("port for this service is %d", goCrawlerConfig.Server.Port))
 	logrus.Info(fmt.Sprintf("run mode for this service is %s", goCrawlerConfig.Server.RunMode))
-	env := goCrawlerConfig.Server.RunMode
-	switch env {
-	case "release":
-		gin.SetMode(gin.ReleaseMode)
-	case "debug":
-		gin.SetMode(gin.DebugMode)
-	case "test":
-		gin.SetMode(gin.TestMode)
-	default:
-		gin.SetMode(gin.DebugMode)
-	}
-	endPoint := fmt.Sprintf("%s:%d", goCrawlerConfig.Server.Host, goCrawlerConfig.Server.Port)
-	routersInit := routers.InitRouter()
-	if mode := gin.Mode(); mode == gin.DebugMode {
-		swagURL := ginSwagger.URL(fmt.Sprintf("http://%s:%d/swagger/doc.json", goCrawlerConfig.Server.Host, goCrawlerConfig.Server.Port))
-		routersInit.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler, swagURL))
-	}
-	server := &http.Server{
-		Addr:    endPoint,
-		Handler: routersInit,
-	}
-	server.ListenAndServe()
+	servers.Run(goCrawlerConfig)
 }
