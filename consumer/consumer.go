@@ -2,7 +2,6 @@ package main
 
 import (
 	"bytes"
-	"encoding/json"
 	"errors"
 	"fmt"
 	"strings"
@@ -110,31 +109,22 @@ func main() {
 	}
 
 	forever := make(chan bool)
-	if goCrawlerConfig.Consumer.Type == "dcard" {
-		logrus.Info("Run dcard consumer")
-		go func() {
-			for d := range msgs {
-				logrus.Info(fmt.Sprintf("Received a message: %v", string(d.Body)))
-				var saveDcardArticlesJob jobs.SaveDcardArticlesJob
-				json.Unmarshal(d.Body, &saveDcardArticlesJob)
-				saveDcardArticlesJob.ExecSaveArtilcesJob()
-				logrus.Info("Done")
-				d.Ack(false)
+	logrus.Info(fmt.Sprintf("Run %+v consumer", goCrawlerConfig.Consumer.Type))
+	go func() {
+		for d := range msgs {
+			logrus.Info(fmt.Sprintf("Received a message: %v", string(d.Body)))
+			factory, err := jobs.GetSocialFactory(goCrawlerConfig.Consumer.Type)
+			if err != nil {
+				logrus.Error(fmt.Sprintf("Failed to get SocialFactory: %v", err))
 			}
-		}()
-	} else {
-		logrus.Info("Run ptt consumer")
-		go func() {
-			for d := range msgs {
-				logrus.Info(fmt.Sprintf("Received a message: %v", string(d.Body)))
-				var savePttArticlesJob jobs.SavePttArticlesJob
-				json.Unmarshal(d.Body, &savePttArticlesJob)
-				savePttArticlesJob.ExecSaveArtilcesJob()
-				logrus.Info("Done")
-				d.Ack(false)
-			}
-		}()
-	}
+			spider := factory.MakeSpider(d.Body)
+			spider.ExecJob()
+			logrus.Info(spider.GetParameters())
+			logrus.Info(spider.GetJobInformation())
+			logrus.Info("Done")
+			d.Ack(false)
+		}
+	}()
 	logrus.Info(" [*] Waiting for messages. To exit press CTRL+C")
 	<-forever
 }
