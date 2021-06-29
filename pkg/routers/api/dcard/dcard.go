@@ -4,8 +4,10 @@ import (
 	"encoding/json"
 	"fmt"
 	"net/http"
+	"time"
 
 	"github.com/gin-gonic/gin"
+	"github.com/gofrs/uuid"
 	"github.com/sean830314/GoCrawler/pkg/app"
 	"github.com/sean830314/GoCrawler/pkg/fluentd"
 	e "github.com/sean830314/GoCrawler/pkg/httputil"
@@ -44,22 +46,28 @@ func ListBoards(c *gin.Context) {
 // @Router /api/v1/crawler/dcard/save-articles [get]
 func SaveArticles(c *gin.Context) {
 	appG := app.Gin{C: c}
-	var form jobs.SaveDcardArticlesJob
+	var form jobs.DcardSpider
 	rc := queue.RabbitmqConfig{
 		Host:     viper.GetString("rabbitmq.host"),
 		Port:     viper.GetInt("rabbitmq.port"),
 		Account:  viper.GetString("rabbitmq.account"),
 		Password: viper.GetString("rabbitmq.password"),
 	}
+	jobId, err := uuid.NewV4()
+	if err != nil {
+		logrus.Error("generate jobid err: ", err)
+	}
+	form.Spider.JobId = jobId.String()
+	form.Spider.JobType = "Dcard"
+	form.Spider.JobTime = time.Now()
 	httpCode, errCode := app.BindAndValid(c, &form)
 	if errCode != e.SUCCESS {
 		appG.Response(httpCode, errCode, nil)
 		return
 	}
 	jsondata, _ := json.Marshal(form)
-	// m := make(map[string]string)
 	var m map[string]interface{}
-	err := json.Unmarshal(jsondata, &m)
+	err = json.Unmarshal(jsondata, &m)
 	if err != nil {
 		logrus.Error("err: ", err)
 	} else {

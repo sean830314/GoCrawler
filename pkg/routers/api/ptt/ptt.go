@@ -3,8 +3,10 @@ package ptt
 import (
 	"encoding/json"
 	"net/http"
+	"time"
 
 	"github.com/gin-gonic/gin"
+	"github.com/gofrs/uuid"
 	"github.com/sean830314/GoCrawler/pkg/app"
 	"github.com/sean830314/GoCrawler/pkg/fluentd"
 	e "github.com/sean830314/GoCrawler/pkg/httputil"
@@ -25,7 +27,7 @@ import (
 // @Router /api/v1/crawler/ptt/save-articles [get]
 func SaveArticles(c *gin.Context) {
 	appG := app.Gin{C: c}
-	var form jobs.SavePttArticlesJob
+	var form jobs.PttSpider
 	rc := queue.RabbitmqConfig{
 		Host:     viper.GetString("rabbitmq.host"),
 		Port:     viper.GetInt("rabbitmq.port"),
@@ -37,10 +39,16 @@ func SaveArticles(c *gin.Context) {
 		appG.Response(httpCode, errCode, nil)
 		return
 	}
+	jobId, err := uuid.NewV4()
+	if err != nil {
+		logrus.Error("generate jobid err: ", err)
+	}
+	form.Spider.JobId = jobId.String()
+	form.Spider.JobType = "Ptt"
+	form.Spider.JobTime = time.Now()
 	jsondata, _ := json.Marshal(form)
-	// m := make(map[string]string)
 	var m map[string]interface{}
-	err := json.Unmarshal(jsondata, &m)
+	err = json.Unmarshal(jsondata, &m)
 	if err != nil {
 		logrus.Error("err: ", err)
 	} else {

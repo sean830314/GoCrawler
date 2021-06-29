@@ -2,6 +2,7 @@ package jobs
 
 import (
 	"fmt"
+	"time"
 
 	"github.com/sean830314/GoCrawler/pkg/nosql"
 	"github.com/sean830314/GoCrawler/pkg/service/dcard"
@@ -10,25 +11,55 @@ import (
 	"github.com/spf13/viper"
 )
 
-type SavePttArticlesJob struct {
-	Board   string `json:"board" form:"board" valid:"Required;MaxSize(100)"`
-	NumPage int    `json:"num_page" form:"num_page" valid:"Range(1,100)"`
+// Abstract product
+type iSpider interface {
+	GetJobInformation() Spider
+	ExecJob()
+	GetParameters() interface{}
 }
 
-func (saj SavePttArticlesJob) ExecSaveArtilcesJob() {
+type Spider struct {
+	JobId   string
+	JobType string
+	JobTime time.Time
+}
+
+func (s *Spider) GetJobInformation() Spider {
+	return *s
+}
+
+func (s *Spider) ExecJob() {
+}
+
+func (s *Spider) GetParameters() interface{} {
+	return *s
+}
+
+// Concrete product
+type PttSpider struct {
+	Board   string `json:"board" form:"board" valid:"Required;MaxSize(100)"`
+	NumPage int    `json:"num_page" form:"num_page" valid:"Range(1,100)"`
+	Spider
+}
+
+func (pSpider *PttSpider) GetParameters() interface{} {
+	return *pSpider
+}
+
+func (pSpider *PttSpider) ExecJob() {
 	c := nosql.CassandraClient{
 		Host: viper.GetString("cassandra.host"),
 		Port: viper.GetInt("cassandra.port"),
 	}
 	c.InitCassandra()
-	pages, err := ptt.GetPagesFromBoard(saj.Board)
+	pages, err := ptt.GetPagesFromBoard(pSpider.Board)
 	if err != nil {
 		logrus.Error(err)
 	}
 	count := 0
 	count_article := 0
-	for i := 0; i < saj.NumPage; i++ {
-		url := fmt.Sprintf("https://www.ptt.cc/bbs/%s/%s", saj.Board, fmt.Sprintf("index%d.html", pages-i))
+	for i := 0; i < pSpider.NumPage; i++ {
+		url := fmt.Sprintf("https://www.ptt.cc/bbs/%s/%s", pSpider.Board, fmt.Sprintf("index%d.html", pages-i))
 		logrus.Info("start crawling %s", url)
 		articlesMeta, err := ptt.GetArticlesFromBoard(url)
 		if err != nil {
@@ -77,25 +108,31 @@ func (saj SavePttArticlesJob) ExecSaveArtilcesJob() {
 	logrus.Info("num of ptt article", count_article)
 }
 
-type SaveDcardArticlesJob struct {
+// Concrete product
+type DcardSpider struct {
 	BoardID    string `json:"board_id" form:"board_id" valid:"Required;MaxSize(100)"`
 	NumArticle int    `json:"num_article" form:"num_article" valid:"Range(1,100)"`
+	Spider
 }
 
-func (saj SaveDcardArticlesJob) ExecSaveArtilcesJob() {
+func (dSpider *DcardSpider) GetParameters() interface{} {
+	return *dSpider
+}
+
+func (dSpider *DcardSpider) ExecJob() {
 	c := nosql.CassandraClient{
 		Host: viper.GetString("cassandra.host"),
 		Port: viper.GetInt("cassandra.port"),
 	}
 	c.InitCassandra()
-	boardURL := fmt.Sprintf("http://dcard.tw/_api/forums/%s/posts", saj.BoardID)
+	boardURL := fmt.Sprintf("http://dcard.tw/_api/forums/%s/posts", dSpider.BoardID)
 	articles, err := dcard.GetArticlesFromBoard(boardURL)
 	if err != nil {
 		logrus.Error(err)
 	}
-	if articles != nil && len(articles) >= saj.NumArticle {
+	if articles != nil && len(articles) >= dSpider.NumArticle {
 		var urls []string
-		for i := 0; i < saj.NumArticle; i++ {
+		for i := 0; i < dSpider.NumArticle; i++ {
 			urls = append(urls, fmt.Sprintf("https://www.dcard.tw/_api/posts/%d", articles[i].ID))
 		}
 		logrus.Info("Crawling urls: ", urls)

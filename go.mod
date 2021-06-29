@@ -14,6 +14,7 @@ require (
 	github.com/go-openapi/swag v0.19.15 // indirect
 	github.com/go-redis/redis/v7 v7.4.0
 	github.com/gocql/gocql v0.0.0-20210129204804-4364a4b9cfdd
+	github.com/gofrs/uuid v4.0.0+incompatible // indirect
 	github.com/mailru/easyjson v0.7.7 // indirect
 	github.com/matoous/go-nanoid v1.5.0 // indirect
 	github.com/opentracing/opentracing-go v1.2.0 // indirect
